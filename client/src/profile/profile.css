@@ -1,0 +1,282 @@
+.student-profile {
+  width: 60%;
+  margin: 50px auto;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button i {
+  margin-right: 5px;
+}
+
+.edit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.edit-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.profile-section {
+  margin-top: 20px;
+}
+
+.profile-section label {
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.profile-section p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.profile-section input,
+.profile-section textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.profile-section input:focus,
+.profile-section textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.location-suggestions,
+.job-title-suggestions {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.location-suggestions li,
+.job-title-suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.location-suggestions li:hover,
+.job-title-suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
+.experience-item,
+.education-item,
+.other-skill-item {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.experience-item button,
+.education-item button,
+.other-skill-item button {
+  margin-top: 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.experience-item button:hover,
+.education-item button:hover,
+.other-skill-item button:hover {
+  background-color: #c82333;
+}
+
+.add-button {
+  margin-top: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.add-button i {
+  margin-right: 5px;
+}
+
+.add-button:hover {
+  background-color: #218838;
+}
+
+.save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+.cancel-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.skills-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.skill-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.skill-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 5px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+.other-skill-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.other-skill-item input {
+  flex: 1;
+}
+
+.other-skill-item button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.other-skill-item button:hover {
+  background-color: #c82333;
+}
+
+/* Styles for react-select */
+.basic-multi-select {
+  margin-top: 5px;
+}
+
+.basic-multi-select .select__control {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.basic-multi-select .select__control--is-focused {
+  border-color: #007bff;
+  box-shadow: none;
+}
+
+.basic-multi-select .select__multi-value {
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+.basic-multi-select .select__multi-value__label {
+  color: white;
+}
+
+.basic-multi-select .select__multi-value__remove {
+  color: white;
+}
+
+.basic-multi-select .select__multi-value__remove:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Error message styles */
+.profile-section .error {
+  color: #dc3545;
+  font-size: 0.875em;
+  margin-top: 5px;
+}

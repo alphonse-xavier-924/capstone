@@ -3,6 +3,7 @@ import SignupStudent from "./signup/SignupStudent";
 import SignupRecruiter from "./signup/SignupRecruiter";
 import LoginStudent from "./login/LoginStudent";
 import LoginRecruiter from "./login/LoginRecruiter";
+import StudentProfile from "./profile/StudentProfile";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Landing from "./landing/Landing";
 
@@ -27,6 +28,10 @@ function App() {
     {
       path: "/login/recruiter",
       element: <LoginRecruiter />,
+    },
+    {
+      path: "/professional/profile",
+      element: <StudentProfile />,
     },
   ]);
   return (
