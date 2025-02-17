@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import "./profile.css";
+import "./studentprofile.css";
 import { jobTitles } from "./jobTitles";
 import useLocationAutocomplete from "./UseLocationAutoComplete";
 
@@ -40,6 +40,7 @@ const StudentProfile = () => {
     },
     rpaSkills: [],
     otherSkills: [],
+    resume: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -208,6 +209,14 @@ const StudentProfile = () => {
     }));
   };
 
+  const handleResumeChange = (e) => {
+    const file = e.target.files[0];
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      resume: file,
+    }));
+  };
+
   const validate = () => {
     const newErrors = {};
 
@@ -325,6 +334,18 @@ const StudentProfile = () => {
           />
         ) : (
           <p>{profile.about}</p>
+        )}
+      </div>
+      <div className="profile-section">
+        <label>Resume:</label>
+        {isEditing ? (
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleResumeChange}
+          />
+        ) : (
+          profile.resume && <p>{profile.resume.name}</p>
         )}
       </div>
       <div className="profile-section">
