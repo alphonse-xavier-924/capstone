@@ -8,6 +8,16 @@
   },
   "author": "",
   "license": "ISC",
+  "_moduleAliases": {
+    "@root": ".",
+    "@controllers": "./controllers",
+    "@models": "./models",
+    "@service": "./services",
+    "@validation": "./validations",
+    "@routes": "./routes",
+    "@config": "./config",
+    "@middleware": "./middleware"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
@@ -16,7 +26,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mongodb": "^6.13.0",
     "mongoose": "^8.10.1",
     "multer": "^1.4.5-lts.1"

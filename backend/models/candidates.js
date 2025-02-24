@@ -17,7 +17,8 @@ const CandidatesSchema = new Schema({
     index: true
   },
   password: {
-    type: String
+    type: String,
+    required: true
   },
   token: { type: String },
   currentJobTitle: {
@@ -66,7 +67,7 @@ const CandidatesSchema = new Schema({
   education: {
     type: [
       {
-        institution: {
+        school: {
           type: String,
           trim: true,
           required: true
@@ -77,8 +78,7 @@ const CandidatesSchema = new Schema({
           required: true
         },
         startDate: {
-          type: Date,
-          required: true
+          type: Date
         },
         endDate: {
           type: Date
