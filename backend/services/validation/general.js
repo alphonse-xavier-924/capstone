@@ -83,6 +83,19 @@ module.exports = {
       .withMessage(`${path} length must be maximum ${maxLength}`)
 
   },
+  requiredArrayofString(path) {
+    return body(path)
+      .exists({ checkNull: true })
+      .withMessage(`${path} is required`)
+      .isArray({ min: 1 })
+      .withMessage(`${path} must be a non-empty array`)
+      .custom((value) => {
+        if (!value.every(item => typeof item === 'string')) {
+          throw new Error(`${path} must contain only strings`);
+        }
+        return true;
+      });
+  },
   requiredArrayWithLengthOptional(path, minLength, maxLength) {
     return body(path)
       .optional()
@@ -271,4 +284,33 @@ module.exports = {
         } is incorrect type`
       )
   },
+  // requiredObjectArray(path, schema){
+  //   return body(path)
+  //     .exists({ checkNull: true })
+  //     .withMessage(`${path} is required`)
+  //     .isArray({ min: 1 })
+  //     .withMessage(`${path} must be a non-empty array`)
+  //     .custom((value) => {
+  //       if (!Array.isArray(value)) {
+  //         throw new Error(`${path} must be an array`);
+  //       }
+  //       value.forEach((item, index) => {
+  //           if (typeof item !== 'object' || Array.isArray(item)) {
+  //             throw new Error(`${path}[${index}] must be an object`);
+  //           }
+
+  //           // Validate required fields and types
+  //           Object.keys(schema).forEach((key) => {
+  //             if (schema[key].required && !(key in item)) {
+  //               throw new Error(`${path}[${index}].${key} is required`);
+  //             }
+  //             if (item[key] && typeof item[key] !== schema[key].type) {
+  //                 throw new Error(`${path}[${index}].${key} must be a ${schema[key].type}`);
+  //             }
+  //           });
+  //       });
+  //       return true;
+  //     });
+  // }
 }
+
