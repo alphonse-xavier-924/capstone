@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./signup.css";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const SignupStudent = () => {
+  // State variables
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,11 +16,16 @@ const SignupStudent = () => {
   const [captchaToken, setCaptchaToken] = useState("");
   const [message, setMessage] = useState("");
 
+  // Navigate hook for navigation
+  const navigate = useNavigate();
+
+  // Handle email change
   const handleEmailChange = (e) => {
     const emailValue = e.target.value;
     setEmail(emailValue);
   };
 
+  // Validate password
   const validatePassword = (password) => {
     const minLength = 8;
     const hasNumber = /\d/;
@@ -35,6 +42,7 @@ const SignupStudent = () => {
     }
   };
 
+  // Handle password change
   const handlePasswordChange = (e) => {
     const passwordValue = e.target.value;
     setPassword(passwordValue);
@@ -53,6 +61,7 @@ const SignupStudent = () => {
     }
   };
 
+  // Handle re-entered password change
   const handleRePasswordChange = (e) => {
     const rePasswordValue = e.target.value;
     setRePassword(rePasswordValue);
@@ -64,26 +73,55 @@ const SignupStudent = () => {
     }
   };
 
+  // Handle CAPTCHA change
   const handleCaptchaChange = (token) => {
     setCaptchaToken(token);
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!passwordError && !rePasswordError && captchaToken) {
-      // Send verification email
-      const response = await fetch("/api/send-verification-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      try {
+        const response = await fetch(
+          "http://localhost:4000/api/candidates/signup",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name, email, password }),
+          }
+        );
 
-      if (response.ok) {
-        setMessage("A verification email has been sent to your email address.");
-      } else {
-        setMessage("Failed to send verification email. Please try again.");
+        console.log("Response status:", response.status);
+        console.log("Response headers:", response.headers);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log("Error data:", errorData);
+          setMessage(
+            `Failed to sign up. ${errorData.message || "Please try again."}`
+          );
+        } else {
+          const data = await response.json();
+          console.log("Success data:", data);
+          setMessage("Signup successful.");
+          // Navigate to login page after 2 seconds
+          setTimeout(() => {
+            navigate("/login/professional");
+          }, 2000);
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        setMessage("Failed to sign up. Please try again.");
+      } finally {
+        // Clear form fields
+        setName("");
+        setEmail("");
+        setPassword("");
+        setRePassword("");
+        setCaptchaToken("");
       }
     }
   };

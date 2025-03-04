@@ -1,50 +1,53 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
+require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const connectDB = require("./config/database");
-const routes = require("./routes");
+const candidatesRoutes = require("./routes/candidates");
 
-// create express app
+// Create express app
 const app = express();
+
+// Enable CORS
 app.use(cors());
-app.use(express.json()); // Middleware to parse JSON bodies
 
-app.use(bodyParser.json({ limit: "10mb"}));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true}));
+// Middleware to parse JSON bodies
+app.use(express.json());
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
-// add & configure middleware
+// Add & configure session middleware
 app.use(
   session({
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      ttl: 14 * 24 * 60 * 60 // = 14 days. Default
+      ttl: 14 * 24 * 60 * 60, // = 14 days. Default
     }),
-    sessionName: process.env.SESSION_NAME,
+    name: process.env.SESSION_NAME,
     secret: process.env.SESSION_SECRET,
-    cookie: { secure: true, maxAge: 1209600000 },
+    cookie: { secure: false, maxAge: 1209600000 }, // Set secure to false for development
     resave: true,
     saveUninitialized: true,
-    retryWrites: false
+    retryWrites: false,
   })
 );
 
+// Connect to the database
 connectDB();
 
-//define a simple route
+// Define a simple route
 app.get("/api", (req, res) => {
   res.json({ message: "No Page found" });
 });
 
-app.use("/api", routes);
+// Use the candidates routes
+app.use("/api/candidates", candidatesRoutes);
 
-const PORT = process.env.PORT;
+// Start the server
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-
-// mongod --config /opt/homebrew/etc/mongod.conf --fork
