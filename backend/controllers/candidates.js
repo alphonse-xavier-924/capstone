@@ -5,42 +5,68 @@ const Candidates = require('@models/candidates');
 const Responder =  require("@service/responder");
 
 module.exports = {
-  async signup(req, res){
-    try{
-      console.log("candidate signup");
-      let candidateExists = await Candidates.findOne({ email: req.body.email });
-      if(candidateExists){
-        return Responder.respondWithError(req, res, "Candidate already exists");
-      }
-
+  async signup(req, res) {
+    try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      
+
       const candidate = new Candidates({
         name: req.body.name,
         email: req.body.email,
-        password: hashedPassword
+        password: hashedPassword,
       });
       await candidate.save();
 
       Responder.respondWithSuccess(req, res, "Candidate created successfully");
-
-    }catch(err){
+    } catch (err) {
       console.log("Error in candidates signup", err);
       Responder.respondWithError(req, res, "Server Error");
     }
   },
-  async editProfile(req, res){
-    try{
+
+  async login(req, res) {
+    try {
+      const { email, password } = req.body;
+      const candidate = await Candidates.findOne({ email });
+
+      if (!candidate) {
+        return Responder.respondWithError(req, res, "Invalid credentials");
+      }
+
+      const isMatch = await bcrypt.compare(password, candidate.password);
+
+      if (!isMatch) {
+        return Responder.respondWithError(req, res, "Invalid credentials");
+      }
+
+      const payload = {
+        candidate: {
+          id: candidate.id,
+        },
+      };
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        expiresIn: process.env.JWT_EXPIRY,
+      });
+
+      Responder.respondWithSuccess(req, res, "Login successful", { token });
+    } catch (err) {
+      console.log("Error in candidates login", err);
+      Responder.respondWithError(req, res, "Server Error");
+    }
+  },
+
+  async editProfile(req, res) {
+    try {
       console.log("editProfile", req.body.candidateId);
-      let candidate = await Candidates.findOne({ _id: req.body.candidateId});
-      if(!candidate){
+      let candidate = await Candidates.findOne({ _id: req.body.candidateId });
+      if (!candidate) {
         return Responder.respondWithError(req, res, "Candidate not found");
       }
 
       candidate.currentJobTitle = req.body.currentJobTitle;
       candidate.location = req.body.location;
       candidate.about = req.body.about;
-      candidate.experience = req.body.experience; 
+      candidate.experience = req.body.experience;
       candidate.education = req.body.education;
       candidate.rpaSkills = req.body.rpaSkills;
       candidate.otherSkills = req.body.otherSkills;
@@ -50,11 +76,9 @@ module.exports = {
       await candidate.save();
 
       Responder.respondWithSuccess(req, res, "Candidate updated successfully");
-
-
-    }catch(err){
+    } catch (err) {
       console.log("Error in candidates editProfile", err);
       Responder.respondWithError(req, res, "Server Error");
     }
-  }
-}
+  },
+};

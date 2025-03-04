@@ -1,12 +1,12 @@
-require('module-alias/register')
-const ValidationRule = require('@service/validation/index')
+require("module-alias/register");
+const ValidationRule = require("@service/validation/index");
 
 module.exports = {
   signup() {
     return [
-      ValidationRule.isEmail('email'),
-      ValidationRule.isStringWithMinLen('name', 2),
-      ValidationRule.isPassword('password'),
+      ValidationRule.isEmail("email"),
+      ValidationRule.isStringWithMinLen("name", 2),
+      ValidationRule.isPassword("password"),
       // ValidationRule.isStringWithMinLen('currentJobTitle', 2),
       // ValidationRule.isStringWithMinLen('location', 2),
       // ValidationRule.isStringOptional('about'),
@@ -19,7 +19,7 @@ module.exports = {
       // ValidationRule.isStringOptional('experience.*.description'),
       // ValidationRule.requiredArray('education'),
       // ValidationRule.isObject('education.*'),
-      // ValidationRule.isStringWithMinLen('education.*.school', 2), 
+      // ValidationRule.isStringWithMinLen('education.*.school', 2),
       // ValidationRule.isStringWithMinLen('education.*.degree', 2),
       // ValidationRule.isDate('education.*.startDate'),
       // ValidationRule.isDate('education.*.endDate'),
@@ -29,23 +29,29 @@ module.exports = {
       // ValidationRule.isStringOptional('githubLink'),
       // ValidationRule.isStringOptional('mediumLink'),
       // ValidationRule.isStringOptional('otherLink'),
-
-    ]
+    ];
   },
 
-  editProfile(){
-    return[
-      ValidationRule.requiredObjectId('candidateId'),
-      ValidationRule.isStringWithMinLen('currentJobTitle', 2),
-      ValidationRule.isStringWithMinLen('location', 2),
-      ValidationRule.isStringOptional('about'),
-      ValidationRule.requiredArray('experience'),
-      ValidationRule.requiredArray('education'),
-      ValidationRule.requiredArrayofString('rpaSkills'),
-      ValidationRule.requiredArrayofString('otherSkills'),
-      ValidationRule.isStringOptional('githubLink'),
-      ValidationRule.isStringOptional('mediumLink'),
-      ValidationRule.isStringOptional('otherLink'),
-    ]
-  }
-}
+  editProfile() {
+    return [
+      ValidationRule.requiredObjectId("candidateId"),
+      ValidationRule.isStringWithMinLen("currentJobTitle", 2),
+      ValidationRule.isStringWithMinLen("location", 2),
+      ValidationRule.isStringOptional("about"),
+      ValidationRule.requiredArray("experience"),
+      ValidationRule.requiredArray("education"),
+      ValidationRule.requiredArrayofString("rpaSkills"),
+      ValidationRule.requiredArrayofString("otherSkills"),
+      ValidationRule.isStringOptional("githubLink"),
+      ValidationRule.isStringOptional("mediumLink"),
+      ValidationRule.isStringOptional("otherLink"),
+    ];
+  },
+
+  login() {
+    return [
+      ValidationRule.isEmail("email"),
+      ValidationRule.isStringWithMinLen("password", 8),
+    ];
+  },
+};
