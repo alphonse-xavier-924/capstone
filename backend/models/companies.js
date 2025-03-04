@@ -30,7 +30,6 @@ const CompanySchema = new Schema({
   },
   numberOfEmployees: {  
     type: Number,
-    required: true
   },
   website: {
     type: String,
@@ -45,12 +44,10 @@ const CompanySchema = new Schema({
     trim: true,
     match: /^\S+@\S+\.\S+$/,
     lowercase: true,
-    required: true,
   },
   contactNumber: {
     type: String,
     trim: true,
-    required: true
   },
   isActive: { 
     type: Boolean,
