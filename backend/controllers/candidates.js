@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Candidates = require('@models/candidates');
 const Responder =  require("@service/responder");
-const { editProfile } = require('../validations');
 
 module.exports = {
   async signup(req, res){
