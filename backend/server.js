@@ -7,6 +7,8 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const connectDB = require("./config/database");
 const candidatesRoutes = require("./routes/candidates");
+const companiesRoutes = require("./routes/companies");
+const authRoutes = require("./routes/authRoutes");
 
 // Create express app
 const app = express();
@@ -45,6 +47,8 @@ app.get("/api", (req, res) => {
 
 // Use the candidates routes
 app.use("/api/candidates", candidatesRoutes);
+app.use("/api/companies", companiesRoutes);
+app.use("/api/auth", authRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 4000;

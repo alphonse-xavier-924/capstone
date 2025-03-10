@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../AuthContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./navbar.css";
 
 const Navbar = () => {
+  const { auth, logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    logout();
+    window.location.reload(); // Reload the page to reflect the logout
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
@@ -24,20 +33,58 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/">
+              <Link className="nav-link" to="/home">
                 Home
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/professional/jobs">
-                Jobs
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/professional/profile">
-                My Profile
-              </Link>
-            </li>
+            {auth.isAuthenticated && auth.role === "candidate" && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/professional/jobs">
+                    Jobs
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/professional/profile">
+                    My Profile
+                  </Link>
+                </li>
+              </>
+            )}
+            {auth.isAuthenticated && auth.role === "recruiter" && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/recruiter/profile">
+                    Company Profile
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/jobposting">
+                    Job Posting
+                  </Link>
+                </li>
+              </>
+            )}
+            {auth.isAuthenticated ? (
+              <li className="nav-item">
+                <button className="nav-link" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login/professional">
+                    Login
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signup/professional">
+                    Sign Up
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

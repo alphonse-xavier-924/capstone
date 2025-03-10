@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import Select from "react-select";
 import "./studentprofile.css";
 import { jobTitles } from "./jobTitles";
 import useLocationAutocomplete from "./UseLocationAutoComplete";
-
 const rpaTools = [
   "UiPath",
   "Automation Anywhere",
@@ -21,9 +21,7 @@ const rpaTools = [
   "Redwood",
   "AutomationEdge",
 ];
-
 const rpaToolOptions = rpaTools.map((tool) => ({ value: tool, label: tool }));
-
 const StudentProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
@@ -33,55 +31,57 @@ const StudentProfile = () => {
     experience: [],
     education: [],
     certifications: "",
-    links: {
-      github: "",
-      medium: "",
-      other: "",
-    },
+    links: { github: "", medium: "", other: "" },
     rpaSkills: [],
     otherSkills: [],
     resume: null,
   });
-
   const [errors, setErrors] = useState({});
   const [locationQuery, setLocationQuery] = useState("");
   const locationSuggestions = useLocationAutocomplete(locationQuery);
-
   const [jobTitleQuery, setJobTitleQuery] = useState("");
   const filteredJobTitles = jobTitles.filter((title) =>
     title.toLowerCase().includes(jobTitleQuery.toLowerCase())
   );
-
   const [originalProfile, setOriginalProfile] = useState(profile);
-
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:4000/api/candidates/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setProfile(data);
+        setOriginalProfile(data);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+    fetchProfile();
+  }, []);
   const handleEditClick = () => {
     setOriginalProfile(profile);
     setIsEditing(true);
   };
-
   const handleCancelClick = () => {
     setProfile(originalProfile);
     setIsEditing(false);
     setErrors({});
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
-    }));
+    setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
-
   const handleLocationChange = (e) => {
     const { value } = e.target;
     setLocationQuery(value);
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      location: value,
-    }));
+    setProfile((prevProfile) => ({ ...prevProfile, location: value }));
   };
-
   const handleLocationSelect = (location) => {
     setProfile((prevProfile) => ({
       ...prevProfile,
@@ -89,35 +89,22 @@ const StudentProfile = () => {
     }));
     setLocationQuery("");
   };
-
   const handleJobTitleChange = (e) => {
     const { value } = e.target;
     setJobTitleQuery(value);
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      jobTitle: value,
-    }));
+    setProfile((prevProfile) => ({ ...prevProfile, jobTitle: value }));
   };
-
   const handleJobTitleSelect = (title) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      jobTitle: title,
-    }));
+    setProfile((prevProfile) => ({ ...prevProfile, jobTitle: title }));
     setJobTitleQuery("");
   };
-
   const handleLinksChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({
       ...prevProfile,
-      links: {
-        ...prevProfile.links,
-        [name]: value,
-      },
+      links: { ...prevProfile.links, [name]: value },
     }));
   };
-
   const handleExperienceChange = (index, e) => {
     const { name, value } = e.target;
     const updatedExperience = [...profile.experience];
@@ -127,7 +114,6 @@ const StudentProfile = () => {
       experience: updatedExperience,
     }));
   };
-
   const handleAddExperience = () => {
     setProfile((prevProfile) => ({
       ...prevProfile,
@@ -137,7 +123,6 @@ const StudentProfile = () => {
       ],
     }));
   };
-
   const handleRemoveExperience = (index) => {
     const updatedExperience = profile.experience.filter((_, i) => i !== index);
     setProfile((prevProfile) => ({
@@ -145,7 +130,6 @@ const StudentProfile = () => {
       experience: updatedExperience,
     }));
   };
-
   const handleEducationChange = (index, e) => {
     const { name, value } = e.target;
     const updatedEducation = [...profile.education];
@@ -155,7 +139,6 @@ const StudentProfile = () => {
       education: updatedEducation,
     }));
   };
-
   const handleAddEducation = () => {
     setProfile((prevProfile) => ({
       ...prevProfile,
@@ -165,7 +148,6 @@ const StudentProfile = () => {
       ],
     }));
   };
-
   const handleRemoveEducation = (index) => {
     const updatedEducation = profile.education.filter((_, i) => i !== index);
     setProfile((prevProfile) => ({
@@ -173,7 +155,6 @@ const StudentProfile = () => {
       education: updatedEducation,
     }));
   };
-
   const handleRPASkillChange = (selectedOptions) => {
     const selectedSkills = selectedOptions
       ? selectedOptions.map((option) => option.value)
@@ -183,14 +164,12 @@ const StudentProfile = () => {
       rpaSkills: selectedSkills,
     }));
   };
-
   const handleAddOtherSkill = () => {
     setProfile((prevProfile) => ({
       ...prevProfile,
       otherSkills: [...prevProfile.otherSkills, ""],
     }));
   };
-
   const handleOtherSkillChange = (index, e) => {
     const { value } = e.target;
     const updatedSkills = [...profile.otherSkills];
@@ -200,7 +179,6 @@ const StudentProfile = () => {
       otherSkills: updatedSkills,
     }));
   };
-
   const handleRemoveOtherSkill = (index) => {
     const updatedSkills = profile.otherSkills.filter((_, i) => i !== index);
     setProfile((prevProfile) => ({
@@ -208,19 +186,16 @@ const StudentProfile = () => {
       otherSkills: updatedSkills,
     }));
   };
-
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      resume: file,
-    }));
+    if (file && /\.(pdf|doc|docx)$/i.test(file.name)) {
+      setProfile((prevProfile) => ({ ...prevProfile, resume: file }));
+    } else {
+      alert("Please upload a valid file (PDF, DOC, or DOCX).");
+    }
   };
-
   const validate = () => {
     const newErrors = {};
-
-    // Validate experience
     profile.experience.forEach((exp, index) => {
       if (!exp.company) {
         newErrors[`experience-${index}-company`] = "Company is required";
@@ -229,8 +204,6 @@ const StudentProfile = () => {
         newErrors[`experience-${index}-role`] = "Role is required";
       }
     });
-
-    // Validate education
     profile.education.forEach((edu, index) => {
       if (!edu.school) {
         newErrors[`education-${index}-school`] = "School is required";
@@ -239,26 +212,72 @@ const StudentProfile = () => {
         newErrors[`education-${index}-degree`] = "Degree is required";
       }
     });
-
-    // Validate other skills
     profile.otherSkills.forEach((skill, index) => {
       if (skill.length < 3) {
         newErrors[`otherSkills-${index}`] =
           "Skill must be at least 3 characters";
       }
     });
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  const handleSave = () => {
+  const handleSave = async () => {
     if (validate()) {
-      setIsEditing(false);
-      // Save the profile data to the server or local storage
+      try {
+        let resumeUrl = profile.resume;
+        const formData = new FormData();
+        formData.append("resume", resumeUrl);
+        const token = localStorage.getItem("userToken");
+        const decodedToken = jwtDecode(token);
+        const candidateId = decodedToken.candidate.id;
+        formData.append("candidateId", candidateId);
+        formData.append("currentJobTitle", profile.jobTitle);
+        formData.append("location", profile.location);
+        formData.append("about", profile.about);
+        formData.append("certifications", profile.certifications);
+        formData.append("links[github]", profile.links.github);
+        formData.append("links[medium]", profile.links.medium);
+        formData.append("links[other]", profile.links.other);
+        profile.experience.forEach((exp, index) => {
+          formData.append(`experience[${index}][company]`, exp.company);
+          formData.append(`experience[${index}][startDate]`, exp.startDate);
+          formData.append(`experience[${index}][endDate]`, exp.endDate);
+          formData.append(`experience[${index}][role]`, exp.role);
+          formData.append(`experience[${index}][description]`, exp.description);
+        });
+        profile.education.forEach((edu, index) => {
+          formData.append(`education[${index}][school]`, edu.school);
+          formData.append(`education[${index}][degree]`, edu.degree);
+          formData.append(`education[${index}][grade]`, edu.grade);
+        });
+        profile.rpaSkills.forEach((skill, index) => {
+          formData.append(`rpaSkills[${index}]`, skill);
+        });
+        profile.otherSkills.forEach((skill, index) => {
+          formData.append(`otherSkills[${index}]`, skill);
+        });
+        const response = await fetch(
+          "http://localhost:4000/api/candidates/editProfile",
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          }
+        );
+        if (response.ok) {
+          setIsEditing(false);
+          const updatedProfile = await response.json();
+          setProfile(updatedProfile);
+          setOriginalProfile(updatedProfile);
+        } else {
+          const errorData = await response.json();
+          console.error("Error saving profile data:", errorData);
+        }
+      } catch (error) {
+        console.error("Error saving profile data:", error);
+      }
     }
   };
-
   return (
     <div className="student-profile">
       <div className="profile-header">
@@ -339,11 +358,14 @@ const StudentProfile = () => {
       <div className="profile-section">
         <label>Resume:</label>
         {isEditing ? (
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleResumeChange}
-          />
+          <>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleResumeChange}
+            />
+            {errors.resume && <p className="error">{errors.resume}</p>}
+          </>
         ) : (
           profile.resume && <p>{profile.resume.name}</p>
         )}
@@ -538,25 +560,17 @@ const StudentProfile = () => {
             isMulti
             name="rpaSkills"
             options={rpaToolOptions}
-            className="basic-multi-select"
-            classNamePrefix="select"
             value={rpaToolOptions.filter((option) =>
               profile.rpaSkills.includes(option.value)
             )}
             onChange={handleRPASkillChange}
           />
         ) : (
-          <div>
-            {profile.rpaSkills.length > 0 ? (
-              profile.rpaSkills.map((skill, index) => (
-                <span key={index} className="skill-badge">
-                  {skill}
-                </span>
-              ))
-            ) : (
-              <p>No RPA skills selected</p>
-            )}
-          </div>
+          <ul>
+            {profile.rpaSkills.map((skill, index) => (
+              <li key={index}>{skill}</li>
+            ))}
+          </ul>
         )}
       </div>
       <div className="profile-section">
@@ -569,12 +583,7 @@ const StudentProfile = () => {
                   type="text"
                   value={skill}
                   onChange={(e) => handleOtherSkillChange(index, e)}
-                  minLength="3"
-                  required
                 />
-                {errors[`otherSkills-${index}`] && (
-                  <p className="error">{errors[`otherSkills-${index}`]}</p>
-                )}
                 <button
                   type="button"
                   onClick={() => handleRemoveOtherSkill(index)}
@@ -592,21 +601,15 @@ const StudentProfile = () => {
             </button>
           </>
         ) : (
-          <div>
-            {profile.otherSkills.length > 0 ? (
-              profile.otherSkills.map((skill, index) => (
-                <span key={index} className="skill-badge">
-                  {skill}
-                </span>
-              ))
-            ) : (
-              <p>No other skills added</p>
-            )}
-          </div>
+          <ul>
+            {profile.otherSkills.map((skill, index) => (
+              <li key={index}>{skill}</li>
+            ))}
+          </ul>
         )}
       </div>
       {isEditing && (
-        <div className="button-group">
+        <div className="profile-actions">
           <button className="save-button" onClick={handleSave}>
             Save
           </button>
@@ -618,5 +621,4 @@ const StudentProfile = () => {
     </div>
   );
 };
-
 export default StudentProfile;

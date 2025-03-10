@@ -1,58 +1,75 @@
-require('module-alias/register')
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const Companies = require('@models/companies');
-const Responder =  require("@service/responder");
-
+const Companies = require("@models/Companies");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Responder = require("@service/responder");
 
 module.exports = {
-  async signup(req, res){
-    try{
-      console.log("company signup");
-      let companyExists = await Companies.findOne({ companyEmail: req.body.companyEmail });
-      if(companyExists){
+  async signup(req, res) {
+    try {
+      const { companyName, companyEmail, password } = req.body;
+      const existingCompany = await Companies.findOne({ companyEmail });
+
+      if (existingCompany) {
         return Responder.respondWithError(req, res, "Company already exists");
       }
 
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      
-      const company = new Companies({
-        companyName: req.body.companyName,
-        companyEmail: req.body.companyEmail,
-        password: hashedPassword
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newCompany = new Companies({
+        companyName,
+        companyEmail,
+        password: hashedPassword,
       });
-      await company.save();
 
-      Responder.respondWithSuccess(req, res, "Company created successfully");
+      await newCompany.save();
 
-    }catch(err){
+      const payload = {
+        company: {
+          id: newCompany.id,
+        },
+      };
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRY,
+      });
+
+      Responder.respondWithSuccess(req, res, "Signup successful", { token });
+    } catch (err) {
       console.log("Error in company signup", err);
       Responder.respondWithError(req, res, "Server Error");
     }
   },
-  async editProfile(req, res){
-    try{
-      let company = await Companies.findOne({ _id: req.body.companyId });
-      if(!company){
+
+  async editProfile(req, res) {
+    try {
+      const {
+        companyId,
+        location,
+        about,
+        numberOfEmployees,
+        website,
+        contactNumber,
+        contactEmail,
+      } = req.body;
+      const company = await Companies.findById(companyId);
+
+      if (!company) {
         return Responder.respondWithError(req, res, "Company not found");
       }
-      if(req.body && req.body.companyName && company.companyName !== req.body.companyName){
-        company.companyName = req.body.companyName;
-      }
 
-      company.location = req.body.location;
-      company.about = req.body.about;
-      company.numberOfEmployees = req.body.numberOfEmployees;
-      company.website = req.body.website;
-      company.contactNumber = req.body.contactNumber;
-      company.contactEmail = req.body.contactEmail;
+      company.location = location || company.location;
+      company.about = about || company.about;
+      company.numberOfEmployees =
+        numberOfEmployees || company.numberOfEmployees;
+      company.website = website || company.website;
+      company.contactNumber = contactNumber || company.contactNumber;
+      company.contactEmail = contactEmail || company.contactEmail;
+
       await company.save();
 
-      Responder.respondWithSuccess(req, res, "Company updated successfully");
-
-    }catch(err){
-      console.log("Error in company editProfile", err);
+      Responder.respondWithSuccess(req, res, "Profile updated successfully");
+    } catch (err) {
+      console.log("Error in company edit profile", err);
       Responder.respondWithError(req, res, "Server Error");
-    } 
-  }
-}
+    }
+  },
+};

@@ -12,6 +12,8 @@ const Jobposting = () => {
     roleType: "Full Time",
     jobLocation: "Hybrid",
     sponsorship: false,
+    veteran: false,
+    disabilities: false,
   });
 
   const [skill, setSkill] = useState("");
@@ -41,9 +43,6 @@ const Jobposting = () => {
     if (formData.jobDescription.length < 500) {
       newErrors.jobDescription =
         "Job description must be at least 500 characters.";
-    }
-    if (!/^\d+$/.test(formData.yearsOfExperience)) {
-      newErrors.yearsOfExperience = "Years of experience must be a number.";
     }
     if (!/^\d+$/.test(formData.salaryFrom)) {
       newErrors.salaryFrom = "Salary must be a number.";
@@ -92,13 +91,17 @@ const Jobposting = () => {
         </div>
         <div className="form-group">
           <label>Years of Experience Required</label>
-          <input
-            type="text"
+          <select
             name="yearsOfExperience"
             value={formData.yearsOfExperience}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Select experience</option>
+            <option value="0 to 2">0 to 2</option>
+            <option value="2 to 5">2 to 5</option>
+            <option value=">5">More than 5 years</option>
+          </select>
           {errors.yearsOfExperience && (
             <p className="error">{errors.yearsOfExperience}</p>
           )}
@@ -171,17 +174,43 @@ const Jobposting = () => {
             <option value="Remote">Remote</option>
           </select>
         </div>
-        <div className="form-group">
-          <label>
-            Do you need sponsorship?
-            <input
-              type="checkbox"
-              name="sponsorship"
-              checked={formData.sponsorship}
-              onChange={handleChange}
-              style={{ marginLeft: "10px" }}
-            />
-          </label>
+        <label className="candidate-questions-title">
+          What questions do you want the candidate to answer?
+        </label>
+        <div className="candidate-questions">
+          <div className="question-group">
+            <label>
+              <input
+                type="checkbox"
+                name="sponsorship"
+                checked={formData.sponsorship}
+                onChange={handleChange}
+              />
+              Do you need sponsorship to work in this role?
+            </label>
+          </div>
+          <div className="question-group">
+            <label>
+              <input
+                type="checkbox"
+                name="veteran"
+                checked={formData.veteran}
+                onChange={handleChange}
+              />
+              Are you a veteran?
+            </label>
+          </div>
+          <div className="question-group">
+            <label>
+              <input
+                type="checkbox"
+                name="disabilities"
+                checked={formData.disabilities}
+                onChange={handleChange}
+              />
+              Do you have any disabilities?
+            </label>
+          </div>
         </div>
         <button type="submit">Post Job</button>
       </form>

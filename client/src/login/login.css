@@ -98,3 +98,31 @@
 .login .btn.btn-primary:hover {
   background-color: #006f6f;
 }
+
+.forgot-password {
+  width: 30%;
+  margin: 50px auto;
+  background-color: #f9f9f9;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.forgot-password .btn {
+  display: inline-block;
+  width: 50%;
+  padding: 10px;
+  background-color: #008b8b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.forgot-password .btn:hover {
+  background-color: #006f6f;
+}

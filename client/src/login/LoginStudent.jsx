@@ -49,11 +49,17 @@ const LoginStudent = () => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log("Login response data:", data); // Log the response data
           setMessage("Login successful.");
           // Save user session (e.g., token) in localStorage or cookies
-          localStorage.setItem("userToken", data.token);
+          const token = data.message.token; // Access the token correctly
+          localStorage.setItem("userToken", token);
+          localStorage.setItem("userRole", "candidate"); // Set the role
+          localStorage.setItem("keepLoggedIn", JSON.stringify(true)); // Set the keepLoggedIn flag
+          console.log("Token stored in localStorage:", token); // Log the token
           // Navigate to profile page
-          navigate("/professional/profile");
+          navigate("/home");
+          window.location.reload();
         } else {
           const errorData = await response.json();
           setMessage(
@@ -104,6 +110,12 @@ const LoginStudent = () => {
           <p>Don't have an account?</p>
           <Link to="/signup/professional" className="btn btn-primary">
             Sign Up
+          </Link>
+        </div>
+        <div className="login">
+          <p>Forgot your password?</p>
+          <Link to="/forgot-password" className="btn btn-primary">
+            Reset Password
           </Link>
         </div>
       </form>

@@ -1,23 +1,22 @@
-require('module-alias/register')
-const express = require('express')
+require("module-alias/register");
+const express = require("express");
 const router = express.Router();
 const companiesController = require("@controllers/companies");
 const Validation = require("@validation");
-const Responder =  require("@service/responder");
-// const userMiddleware = require('../middleware/userMiddleware');
+const Responder = require("@service/responder");
 
-router.post('/signup', 
-  Validation.companySignup(), 
+router.post(
+  "/signup",
+  Validation.companySignup(),
   Responder.validate.bind(Responder),
   companiesController.signup.bind(companiesController)
 );
 
-router.post('/editProfile',
+router.post(
+  "/editProfile",
   Validation.companyEditProfile(),
   Responder.validate.bind(Responder),
   companiesController.editProfile.bind(companiesController)
-)
-
-
+);
 
 module.exports = router;

@@ -5,7 +5,8 @@ import { Tooltip } from "react-tooltip";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const SignupRecruiter = () => {
-  const [email, setEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [companyEmail, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [error, setError] = useState("");
@@ -15,6 +16,10 @@ const SignupRecruiter = () => {
   const [message, setMessage] = useState("");
 
   const forbiddenDomains = ["gmail.com", "yahoo.com", "hotmail.com"];
+
+  const handleCompanyNameChange = (e) => {
+    setCompanyName(e.target.value);
+  };
 
   const handleEmailChange = (e) => {
     const emailValue = e.target.value;
@@ -80,19 +85,36 @@ const SignupRecruiter = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!error && !passwordError && !rePasswordError && captchaToken) {
-      // Send verification email
-      const response = await fetch("/api/send-verification-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      try {
+        const response = await fetch(
+          "http://localhost:4000/api/companies/signup",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              companyName,
+              companyEmail,
+              password,
+              captchaToken,
+            }),
+          }
+        );
 
-      if (response.ok) {
-        setMessage("A verification email has been sent to your email address.");
-      } else {
-        setMessage("Failed to send verification email. Please try again.");
+        if (response.ok) {
+          setMessage("Signup successful.");
+        } else if (response.status === 404) {
+          setMessage("Signup failed. Endpoint not found.");
+        } else {
+          const errorData = await response.json();
+          setMessage(
+            `Signup failed. ${errorData.message || "Please try again."}`
+          );
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        setMessage("Signup failed. Please try again.");
       }
     }
   };
@@ -108,6 +130,8 @@ const SignupRecruiter = () => {
             id="name"
             autoComplete="off"
             placeholder="Enter your company's name"
+            value={companyName}
+            onChange={handleCompanyNameChange}
           />
           <label htmlFor="email">Company Email Address:</label>
           <input
@@ -115,7 +139,7 @@ const SignupRecruiter = () => {
             id="email"
             autoComplete="off"
             placeholder="Enter your Email"
-            value={email}
+            value={companyEmail}
             onChange={handleEmailChange}
           />
           {error && <p className="error">{error}</p>}

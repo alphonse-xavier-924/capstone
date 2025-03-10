@@ -1,8 +1,8 @@
-require('module-alias/register')
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const Candidates = require('@models/candidates');
-const Responder =  require("@service/responder");
+require("module-alias/register");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Candidates = require("@models/Candidates");
+const Responder = require("@service/responder");
 
 module.exports = {
   async signup(req, res) {
@@ -44,7 +44,7 @@ module.exports = {
         },
       };
 
-      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRY,
       });
 
@@ -57,22 +57,35 @@ module.exports = {
 
   async editProfile(req, res) {
     try {
-      console.log("editProfile", req.body.candidateId);
+      console.log("editProfile", req.body);
       let candidate = await Candidates.findOne({ _id: req.body.candidateId });
       if (!candidate) {
         return Responder.respondWithError(req, res, "Candidate not found");
       }
 
+      // Validate experience array and handle missing fields
+      for (let exp of req.body.experience || []) {
+        if (!exp.role || !exp.company) {
+          return Responder.respondWithError(
+            req,
+            res,
+            "Experience entries must include role and company"
+          );
+        }
+      }
+
       candidate.currentJobTitle = req.body.currentJobTitle;
       candidate.location = req.body.location;
       candidate.about = req.body.about;
-      candidate.experience = req.body.experience;
-      candidate.education = req.body.education;
-      candidate.rpaSkills = req.body.rpaSkills;
-      candidate.otherSkills = req.body.otherSkills;
-      candidate.githubLink = req.body.githubLink;
-      candidate.mediumLink = req.body.mediumLink;
-      candidate.otherLink = req.body.otherLink;
+      candidate.experience = req.body.experience || [];
+      candidate.education = req.body.education || [];
+      candidate.rpaSkills = req.body.rpaSkills || [];
+      candidate.otherSkills = req.body.otherSkills || [];
+      candidate.githubLink = req.body.githubLink || "";
+      candidate.mediumLink = req.body.mediumLink || "";
+      candidate.otherLink = req.body.otherLink || "";
+      candidate.certifications = req.body.certifications || "";
+      candidate.links = req.body.links || {};
       await candidate.save();
 
       Responder.respondWithSuccess(req, res, "Candidate updated successfully");
