@@ -10,6 +10,7 @@ const candidatesRoutes = require("./routes/candidates");
 const companiesRoutes = require("./routes/companies");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
+const jobApplicationsRoutes = require("./routes/jobApplications");
 
 // Create express app
 const app = express();
@@ -51,6 +52,7 @@ app.use("/api/candidates", candidatesRoutes);
 app.use("/api/companies", companiesRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/job-applications", jobApplicationsRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 4000;
