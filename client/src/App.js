@@ -19,6 +19,7 @@ import ResetPassword from "./login/ResetPassword";
 import Home from "./home/Home";
 import { AuthProvider } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute";
+import Joblist from "./joblist/Joblist";
 
 function App() {
   const isLoggedIn = JSON.parse(localStorage.getItem("keepLoggedIn"));
@@ -52,6 +53,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <StudentProfile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/professional/jobs"
+              element={
+                <PrivateRoute>
+                  <Joblist />
                 </PrivateRoute>
               }
             />

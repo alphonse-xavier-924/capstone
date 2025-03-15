@@ -5,6 +5,7 @@ const jobsController = require("@controllers/jobs");
 const Validation = require("@validation/jobposting");
 const Responder = require("@service/responder");
 const multer = require("multer");
+const upload = multer();
 
 router.post(
   "/post-job",
@@ -12,5 +13,7 @@ router.post(
   Responder.validate.bind(Responder),
   jobsController.createJob.bind(jobsController)
 );
+
+router.get("/active-jobs", jobsController.getActiveJobs.bind(jobsController));
 
 module.exports = router;

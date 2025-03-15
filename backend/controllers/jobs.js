@@ -16,7 +16,7 @@ exports.createJob = async (req, res) => {
       disabilities,
     } = req.body;
 
-    if (salaryFrom > salaryTo) {
+    if (Number(salaryFrom) > Number(salaryTo)) {
       return res
         .status(400)
         .json({ error: "Salary start value cannot exceed salary end value." });
@@ -38,6 +38,15 @@ exports.createJob = async (req, res) => {
 
     await newJob.save();
     res.status(201).json({ message: "Job posted successfully", data: newJob });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getActiveJobs = async (req, res) => {
+  try {
+    const activeJobs = await Jobs.find({ isActive: true });
+    res.status(200).json(activeJobs);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
