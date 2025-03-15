@@ -12,7 +12,7 @@ const CompanySchema = new Schema(
     companyEmail: {
       type: String,
       trim: true,
-      match: /^\S+@\S+\.\S+$/,
+      match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
       lowercase: true,
       required: true,
       unique: true,
@@ -25,14 +25,17 @@ const CompanySchema = new Schema(
     token: { type: String },
     location: {
       type: String,
+      required: true,
       trim: true,
     },
     about: {
       type: String,
+      required: true,
       trim: true,
     },
     numberOfEmployees: {
-      type: Number,
+      type: String,
+      required: true,
     },
     website: {
       type: String,
@@ -45,11 +48,13 @@ const CompanySchema = new Schema(
     contactEmail: {
       type: String,
       trim: true,
-      match: /^\S+@\S+\.\S+$/,
+      match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
+      required: true,
       lowercase: true,
     },
-    contactNumber: {
+    contactPhone: {
       type: String,
+      required: true,
       trim: true,
     },
     isActive: {
@@ -70,7 +75,11 @@ const CompanySchema = new Schema(
 
 CompanySchema.post("save", async function (doc, next) {
   try {
-    await User.create({ email: doc.companyEmail, password: doc.password });
+    await User.create({
+      email: doc.companyEmail,
+      password: doc.password,
+      role: "recruiter",
+    });
     next();
   } catch (error) {
     next(error);

@@ -4,6 +4,7 @@ import Select from "react-select";
 import "./studentprofile.css";
 import { jobTitles } from "./jobTitles";
 import useLocationAutocomplete from "./UseLocationAutoComplete";
+
 const rpaTools = [
   "UiPath",
   "Automation Anywhere",
@@ -22,6 +23,7 @@ const rpaTools = [
   "AutomationEdge",
 ];
 const rpaToolOptions = rpaTools.map((tool) => ({ value: tool, label: tool }));
+
 const StudentProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
@@ -44,6 +46,7 @@ const StudentProfile = () => {
     title.toLowerCase().includes(jobTitleQuery.toLowerCase())
   );
   const [originalProfile, setOriginalProfile] = useState(profile);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -56,228 +59,225 @@ const StudentProfile = () => {
           }
         );
         const data = await response.json();
-        setProfile(data);
-        setOriginalProfile(data);
+        const normalized = {
+          ...data,
+          experience: Array.isArray(data.experience) ? data.experience : [],
+          education: Array.isArray(data.education) ? data.education : [],
+          links: data.links
+            ? {
+                github: data.links.github || "",
+                medium: data.links.medium || "",
+                other: data.links.other || "",
+              }
+            : { github: "", medium: "", other: "" },
+          rpaSkills: Array.isArray(data.rpaSkills) ? data.rpaSkills : [],
+          otherSkills: Array.isArray(data.otherSkills) ? data.otherSkills : [],
+        };
+        setProfile(normalized);
+        setOriginalProfile(normalized);
       } catch (error) {
         console.error("Error fetching profile data:", error);
       }
     };
     fetchProfile();
   }, []);
+
   const handleEditClick = () => {
     setOriginalProfile(profile);
     setIsEditing(true);
   };
+
   const handleCancelClick = () => {
     setProfile(originalProfile);
     setIsEditing(false);
     setErrors({});
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleLocationChange = (e) => {
     const { value } = e.target;
     setLocationQuery(value);
-    setProfile((prevProfile) => ({ ...prevProfile, location: value }));
+    setProfile((prev) => ({ ...prev, location: value }));
   };
+
   const handleLocationSelect = (location) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      location: location.display_name,
-    }));
+    setProfile((prev) => ({ ...prev, location: location.display_name }));
     setLocationQuery("");
   };
+
   const handleJobTitleChange = (e) => {
     const { value } = e.target;
     setJobTitleQuery(value);
-    setProfile((prevProfile) => ({ ...prevProfile, jobTitle: value }));
+    setProfile((prev) => ({ ...prev, jobTitle: value }));
   };
+
   const handleJobTitleSelect = (title) => {
-    setProfile((prevProfile) => ({ ...prevProfile, jobTitle: title }));
+    setProfile((prev) => ({ ...prev, jobTitle: title }));
     setJobTitleQuery("");
   };
+
   const handleLinksChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      links: { ...prevProfile.links, [name]: value },
+    setProfile((prev) => ({
+      ...prev,
+      links: {
+        ...(prev.links || { github: "", medium: "", other: "" }),
+        [name]: value,
+      },
     }));
   };
+
   const handleExperienceChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedExperience = [...profile.experience];
-    updatedExperience[index][name] = value;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      experience: updatedExperience,
-    }));
+    const updated = [...profile.experience];
+    updated[index][name] = value;
+    setProfile((prev) => ({ ...prev, experience: updated }));
   };
+
   const handleAddExperience = () => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
+    setProfile((prev) => ({
+      ...prev,
       experience: [
-        ...prevProfile.experience,
+        ...prev.experience,
         { company: "", startDate: "", endDate: "", role: "", description: "" },
       ],
     }));
   };
+
   const handleRemoveExperience = (index) => {
-    const updatedExperience = profile.experience.filter((_, i) => i !== index);
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      experience: updatedExperience,
+    setProfile((prev) => ({
+      ...prev,
+      experience: prev.experience.filter((_, i) => i !== index),
     }));
   };
+
   const handleEducationChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedEducation = [...profile.education];
-    updatedEducation[index][name] = value;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      education: updatedEducation,
-    }));
+    const updated = [...profile.education];
+    updated[index][name] = value;
+    setProfile((prev) => ({ ...prev, education: updated }));
   };
+
   const handleAddEducation = () => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      education: [
-        ...prevProfile.education,
-        { school: "", degree: "", grade: "" },
-      ],
+    setProfile((prev) => ({
+      ...prev,
+      education: [...prev.education, { school: "", degree: "", grade: "" }],
     }));
   };
+
   const handleRemoveEducation = (index) => {
-    const updatedEducation = profile.education.filter((_, i) => i !== index);
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      education: updatedEducation,
+    setProfile((prev) => ({
+      ...prev,
+      education: prev.education.filter((_, i) => i !== index),
     }));
   };
-  const handleRPASkillChange = (selectedOptions) => {
-    const selectedSkills = selectedOptions
-      ? selectedOptions.map((option) => option.value)
-      : [];
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      rpaSkills: selectedSkills,
+
+  const handleRPASkillChange = (selected) => {
+    setProfile((prev) => ({
+      ...prev,
+      rpaSkills: selected ? selected.map((o) => o.value) : [],
     }));
   };
+
   const handleAddOtherSkill = () => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      otherSkills: [...prevProfile.otherSkills, ""],
-    }));
+    setProfile((prev) => ({ ...prev, otherSkills: [...prev.otherSkills, ""] }));
   };
+
   const handleOtherSkillChange = (index, e) => {
-    const { value } = e.target;
-    const updatedSkills = [...profile.otherSkills];
-    updatedSkills[index] = value;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      otherSkills: updatedSkills,
-    }));
+    const updated = [...profile.otherSkills];
+    updated[index] = e.target.value;
+    setProfile((prev) => ({ ...prev, otherSkills: updated }));
   };
+
   const handleRemoveOtherSkill = (index) => {
-    const updatedSkills = profile.otherSkills.filter((_, i) => i !== index);
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      otherSkills: updatedSkills,
+    setProfile((prev) => ({
+      ...prev,
+      otherSkills: prev.otherSkills.filter((_, i) => i !== index),
     }));
   };
+
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
-    if (file && /\.(pdf|doc|docx)$/i.test(file.name)) {
-      setProfile((prevProfile) => ({ ...prevProfile, resume: file }));
-    } else {
-      alert("Please upload a valid file (PDF, DOC, or DOCX).");
-    }
+    file && /\.(pdf|doc|docx)$/i.test(file.name)
+      ? setProfile((prev) => ({ ...prev, resume: file }))
+      : alert("Invalid file type");
   };
+
   const validate = () => {
     const newErrors = {};
-    profile.experience.forEach((exp, index) => {
-      if (!exp.company) {
-        newErrors[`experience-${index}-company`] = "Company is required";
-      }
-      if (!exp.role) {
-        newErrors[`experience-${index}-role`] = "Role is required";
-      }
+    (profile.experience || []).forEach((exp, i) => {
+      if (!exp.company) newErrors[`experience-${i}-company`] = "Required";
+      if (!exp.role) newErrors[`experience-${i}-role`] = "Required";
     });
-    profile.education.forEach((edu, index) => {
-      if (!edu.school) {
-        newErrors[`education-${index}-school`] = "School is required";
-      }
-      if (!edu.degree) {
-        newErrors[`education-${index}-degree`] = "Degree is required";
-      }
+    (profile.education || []).forEach((edu, i) => {
+      if (!edu.school) newErrors[`education-${i}-school`] = "Required";
+      if (!edu.degree) newErrors[`education-${i}-degree`] = "Required";
+      if (!edu.grade) newErrors[`education-${i}-grade`] = "Required";
     });
-    profile.otherSkills.forEach((skill, index) => {
-      if (skill.length < 3) {
-        newErrors[`otherSkills-${index}`] =
-          "Skill must be at least 3 characters";
-      }
+    (profile.otherSkills || []).forEach((skill, i) => {
+      if (skill.length < 3) newErrors[`otherSkills-${i}`] = "Too short";
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleSave = async () => {
-    if (validate()) {
-      try {
-        let resumeUrl = profile.resume;
-        const formData = new FormData();
-        formData.append("resume", resumeUrl);
-        const token = localStorage.getItem("userToken");
-        const decodedToken = jwtDecode(token);
-        const candidateId = decodedToken.candidate.id;
-        formData.append("candidateId", candidateId);
-        formData.append("currentJobTitle", profile.jobTitle);
-        formData.append("location", profile.location);
-        formData.append("about", profile.about);
-        formData.append("certifications", profile.certifications);
-        formData.append("links[github]", profile.links.github);
-        formData.append("links[medium]", profile.links.medium);
-        formData.append("links[other]", profile.links.other);
-        profile.experience.forEach((exp, index) => {
-          formData.append(`experience[${index}][company]`, exp.company);
-          formData.append(`experience[${index}][startDate]`, exp.startDate);
-          formData.append(`experience[${index}][endDate]`, exp.endDate);
-          formData.append(`experience[${index}][role]`, exp.role);
-          formData.append(`experience[${index}][description]`, exp.description);
-        });
-        profile.education.forEach((edu, index) => {
-          formData.append(`education[${index}][school]`, edu.school);
-          formData.append(`education[${index}][degree]`, edu.degree);
-          formData.append(`education[${index}][grade]`, edu.grade);
-        });
-        profile.rpaSkills.forEach((skill, index) => {
-          formData.append(`rpaSkills[${index}]`, skill);
-        });
-        profile.otherSkills.forEach((skill, index) => {
-          formData.append(`otherSkills[${index}]`, skill);
-        });
-        const response = await fetch(
-          "http://localhost:4000/api/candidates/editProfile",
-          {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
-            body: formData,
-          }
+    if (!validate()) return;
+    try {
+      const formData = new FormData();
+      formData.append("resume", profile.resume);
+      formData.append(
+        "candidateId",
+        jwtDecode(localStorage.getItem("userToken")).candidate.id
+      );
+      formData.append("currentJobTitle", profile.jobTitle);
+      formData.append("location", profile.location);
+      formData.append("about", profile.about);
+      formData.append("certifications", profile.certifications);
+      formData.append("links[github]", profile.links.github);
+      formData.append("links[medium]", profile.links.medium);
+      formData.append("links[other]", profile.links.other);
+      profile.experience.forEach((exp, i) => {
+        Object.entries(exp).forEach(([key, val]) =>
+          formData.append(`experience[${i}][${key}]`, val)
         );
-        if (response.ok) {
-          setIsEditing(false);
-          const updatedProfile = await response.json();
-          setProfile(updatedProfile);
-          setOriginalProfile(updatedProfile);
-        } else {
-          const errorData = await response.json();
-          console.error("Error saving profile data:", errorData);
+      });
+      profile.education.forEach((edu, i) => {
+        Object.entries(edu).forEach(([key, val]) =>
+          formData.append(`education[${i}][${key}]`, val)
+        );
+      });
+      profile.rpaSkills.forEach((skill, i) =>
+        formData.append(`rpaSkills[${i}]`, skill)
+      );
+      profile.otherSkills.forEach((skill, i) =>
+        formData.append(`otherSkills[${i}]`, skill)
+      );
+      const response = await fetch(
+        "http://localhost:4000/api/candidates/editProfile",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+          body: formData,
         }
-      } catch (error) {
-        console.error("Error saving profile data:", error);
-      }
+      );
+      if (response.ok) {
+        const updated = await response.json();
+        setProfile(updated);
+        setOriginalProfile(updated);
+        setIsEditing(false);
+      } else console.error("Save failed:", await response.json());
+    } catch (error) {
+      console.error("Save error:", error);
     }
   };
+
   return (
     <div className="student-profile">
       <div className="profile-header">
@@ -297,15 +297,15 @@ const StudentProfile = () => {
             <input
               type="text"
               name="jobTitle"
-              placeholder="Student, Automation Intern, RPA Engineer, etc."
+              placeholder="Student, Automation Intern..."
               value={profile.jobTitle}
               onChange={handleJobTitleChange}
             />
             {jobTitleQuery && (
               <ul className="job-title-suggestions">
-                {filteredJobTitles.map((title, index) => (
-                  <li key={index} onClick={() => handleJobTitleSelect(title)}>
-                    {title}
+                {filteredJobTitles.map((t, i) => (
+                  <li key={i} onClick={() => handleJobTitleSelect(t)}>
+                    {t}
                   </li>
                 ))}
               </ul>
@@ -327,12 +327,9 @@ const StudentProfile = () => {
             />
             {locationSuggestions.length > 0 && (
               <ul className="location-suggestions">
-                {locationSuggestions.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleLocationSelect(suggestion)}
-                  >
-                    {suggestion.display_name}
+                {locationSuggestions.map((s, i) => (
+                  <li key={i} onClick={() => handleLocationSelect(s)}>
+                    {s.display_name}
                   </li>
                 ))}
               </ul>
@@ -374,54 +371,47 @@ const StudentProfile = () => {
         <label>Experience:</label>
         {isEditing ? (
           <>
-            {profile.experience.map((exp, index) => (
-              <div key={index} className="experience-item">
+            {(profile.experience || []).map((exp, i) => (
+              <div key={i} className="experience-item">
                 <input
                   type="text"
                   name="company"
-                  placeholder="Company (required)"
+                  placeholder="Company*"
                   value={exp.company}
-                  onChange={(e) => handleExperienceChange(index, e)}
-                  required
+                  onChange={(e) => handleExperienceChange(i, e)}
                 />
-                {errors[`experience-${index}-company`] && (
-                  <p className="error">
-                    {errors[`experience-${index}-company`]}
-                  </p>
+                {errors[`experience-${i}-company`] && (
+                  <p className="error">{errors[`experience-${i}-company`]}</p>
                 )}
                 <input
                   type="date"
                   name="startDate"
                   value={exp.startDate}
-                  onChange={(e) => handleExperienceChange(index, e)}
+                  onChange={(e) => handleExperienceChange(i, e)}
                 />
                 <input
                   type="date"
                   name="endDate"
                   value={exp.endDate}
-                  onChange={(e) => handleExperienceChange(index, e)}
+                  onChange={(e) => handleExperienceChange(i, e)}
                 />
                 <input
                   type="text"
                   name="role"
-                  placeholder="Role (required)"
+                  placeholder="Role*"
                   value={exp.role}
-                  onChange={(e) => handleExperienceChange(index, e)}
-                  required
+                  onChange={(e) => handleExperienceChange(i, e)}
                 />
-                {errors[`experience-${index}-role`] && (
-                  <p className="error">{errors[`experience-${index}-role`]}</p>
+                {errors[`experience-${i}-role`] && (
+                  <p className="error">{errors[`experience-${i}-role`]}</p>
                 )}
                 <textarea
                   name="description"
-                  placeholder="Job Description"
+                  placeholder="Description"
                   value={exp.description}
-                  onChange={(e) => handleExperienceChange(index, e)}
+                  onChange={(e) => handleExperienceChange(i, e)}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveExperience(index)}
-                >
+                <button type="button" onClick={() => handleRemoveExperience(i)}>
                   Remove
                 </button>
               </div>
@@ -435,11 +425,11 @@ const StudentProfile = () => {
             </button>
           </>
         ) : (
-          profile.experience.map((exp, index) => (
-            <div key={index}>
+          (profile.experience || []).map((exp, i) => (
+            <div key={i}>
               <p>Company: {exp.company}</p>
-              <p>Start Date: {exp.startDate}</p>
-              <p>End Date: {exp.endDate}</p>
+              <p>Start: {exp.startDate}</p>
+              <p>End: {exp.endDate}</p>
               <p>Role: {exp.role}</p>
               <p>Description: {exp.description}</p>
             </div>
@@ -450,41 +440,39 @@ const StudentProfile = () => {
         <label>Education:</label>
         {isEditing ? (
           <>
-            {profile.education.map((edu, index) => (
-              <div key={index} className="education-item">
+            {(profile.education || []).map((edu, i) => (
+              <div key={i} className="education-item">
                 <input
                   type="text"
                   name="school"
-                  placeholder="School (required)"
+                  placeholder="School*"
                   value={edu.school}
-                  onChange={(e) => handleEducationChange(index, e)}
-                  required
+                  onChange={(e) => handleEducationChange(i, e)}
                 />
-                {errors[`education-${index}-school`] && (
-                  <p className="error">{errors[`education-${index}-school`]}</p>
+                {errors[`education-${i}-school`] && (
+                  <p className="error">{errors[`education-${i}-school`]}</p>
                 )}
                 <input
                   type="text"
                   name="degree"
-                  placeholder="Degree (required)"
+                  placeholder="Degree*"
                   value={edu.degree}
-                  onChange={(e) => handleEducationChange(index, e)}
-                  required
+                  onChange={(e) => handleEducationChange(i, e)}
                 />
-                {errors[`education-${index}-degree`] && (
-                  <p className="error">{errors[`education-${index}-degree`]}</p>
+                {errors[`education-${i}-degree`] && (
+                  <p className="error">{errors[`education-${i}-degree`]}</p>
                 )}
                 <input
                   type="text"
                   name="grade"
                   placeholder="Grade"
                   value={edu.grade}
-                  onChange={(e) => handleEducationChange(index, e)}
+                  onChange={(e) => handleEducationChange(i, e)}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveEducation(index)}
-                >
+                {errors[`education-${i}-grade`] && (
+                  <p className="error">{errors[`education-${i}-grade`]}</p>
+                )}
+                <button type="button" onClick={() => handleRemoveEducation(i)}>
                   Remove
                 </button>
               </div>
@@ -498,8 +486,8 @@ const StudentProfile = () => {
             </button>
           </>
         ) : (
-          profile.education.map((edu, index) => (
-            <div key={index}>
+          (profile.education || []).map((edu, i) => (
+            <div key={i}>
               <p>School: {edu.school}</p>
               <p>Degree: {edu.degree}</p>
               <p>Grade: {edu.grade}</p>
@@ -547,9 +535,9 @@ const StudentProfile = () => {
           </>
         ) : (
           <div>
-            <p>GitHub: {profile.links.github}</p>
-            <p>Medium: {profile.links.medium}</p>
-            <p>Other: {profile.links.other}</p>
+            <p>GitHub: {profile.links?.github || ""}</p>
+            <p>Medium: {profile.links?.medium || ""}</p>
+            <p>Other: {profile.links?.other || ""}</p>
           </div>
         )}
       </div>
@@ -558,17 +546,16 @@ const StudentProfile = () => {
         {isEditing ? (
           <Select
             isMulti
-            name="rpaSkills"
             options={rpaToolOptions}
-            value={rpaToolOptions.filter((option) =>
-              profile.rpaSkills.includes(option.value)
+            value={rpaToolOptions.filter((o) =>
+              profile.rpaSkills.includes(o.value)
             )}
             onChange={handleRPASkillChange}
           />
         ) : (
           <ul>
-            {profile.rpaSkills.map((skill, index) => (
-              <li key={index}>{skill}</li>
+            {(profile.rpaSkills || []).map((s, i) => (
+              <li key={i}>{s}</li>
             ))}
           </ul>
         )}
@@ -577,17 +564,14 @@ const StudentProfile = () => {
         <label>Other Skills:</label>
         {isEditing ? (
           <>
-            {profile.otherSkills.map((skill, index) => (
-              <div key={index} className="other-skill-item">
+            {(profile.otherSkills || []).map((s, i) => (
+              <div key={i} className="other-skill-item">
                 <input
                   type="text"
-                  value={skill}
-                  onChange={(e) => handleOtherSkillChange(index, e)}
+                  value={s}
+                  onChange={(e) => handleOtherSkillChange(i, e)}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveOtherSkill(index)}
-                >
+                <button type="button" onClick={() => handleRemoveOtherSkill(i)}>
                   Remove
                 </button>
               </div>
@@ -602,8 +586,8 @@ const StudentProfile = () => {
           </>
         ) : (
           <ul>
-            {profile.otherSkills.map((skill, index) => (
-              <li key={index}>{skill}</li>
+            {(profile.otherSkills || []).map((s, i) => (
+              <li key={i}>{s}</li>
             ))}
           </ul>
         )}
@@ -621,4 +605,5 @@ const StudentProfile = () => {
     </div>
   );
 };
+
 export default StudentProfile;

@@ -1,7 +1,10 @@
+require("module-alias/register");
 const Companies = require("@models/Companies");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Responder = require("@service/responder");
+const multer = require("multer");
+const upload = multer();
 
 module.exports = {
   async signup(req, res) {
@@ -39,32 +42,81 @@ module.exports = {
     }
   },
 
-  async editProfile(req, res) {
+  async login(req, res) {
     try {
-      const {
-        companyId,
-        location,
-        about,
-        numberOfEmployees,
-        website,
-        contactNumber,
-        contactEmail,
-      } = req.body;
-      const company = await Companies.findById(companyId);
+      const { email, password } = req.body;
+      const company = await Companies.findOne({ companyEmail: email }); // Fixed field name
 
+      if (!company) {
+        return Responder.respondWithError(req, res, "Invalid credentials");
+      }
+
+      const isMatch = await bcrypt.compare(password, company.password);
+
+      if (!isMatch) {
+        return Responder.respondWithError(req, res, "Invalid credentials");
+      }
+
+      const payload = { company: { id: company.id } };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRY,
+      });
+
+      Responder.respondWithSuccess(req, res, "Login successful", { token });
+    } catch (err) {
+      console.log("Error in recruiters login", err);
+      Responder.respondWithError(req, res, "Server Error");
+    }
+  },
+
+  async editProfile(req, res) {
+    req.body = JSON.parse(JSON.stringify(req.body));
+
+    try {
+      console.log("editProfile", req.body);
+
+      const company = await Companies.findOne({ _id: req.body.companyId });
       if (!company) {
         return Responder.respondWithError(req, res, "Company not found");
       }
 
-      company.location = location || company.location;
-      company.about = about || company.about;
-      company.numberOfEmployees =
-        numberOfEmployees || company.numberOfEmployees;
-      company.website = website || company.website;
-      company.contactNumber = contactNumber || company.contactNumber;
-      company.contactEmail = contactEmail || company.contactEmail;
+      // Check if the new contactEmail is already used by another company
+      if (
+        req.body.contactEmail &&
+        req.body.contactEmail !== company.contactEmail
+      ) {
+        const existingCompany = await Companies.findOne({
+          contactEmail: req.body.contactEmail,
+        });
+        if (existingCompany) {
+          return Responder.respondWithError(
+            req,
+            res,
+            "Email already in use by another company"
+          );
+        }
+      }
 
-      await company.save();
+      // Use `findOneAndUpdate()` to ensure only an update occurs
+      const updatedCompany = await Companies.findOneAndUpdate(
+        { _id: req.body.companyId },
+        {
+          $set: {
+            location: req.body.location || company.location,
+            about: req.body.about || company.about,
+            numberOfEmployees:
+              req.body.numberOfEmployees || company.numberOfEmployees,
+            website: req.body.website || company.website,
+            contactPhone: req.body.contactPhone || company.contactPhone,
+            contactEmail: req.body.contactEmail || company.contactEmail,
+          },
+        },
+        { new: true } // Return the updated document
+      );
+
+      if (!updatedCompany) {
+        return Responder.respondWithError(req, res, "Failed to update profile");
+      }
 
       Responder.respondWithSuccess(req, res, "Profile updated successfully");
     } catch (err) {

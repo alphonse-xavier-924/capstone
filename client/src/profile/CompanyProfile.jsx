@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import useLocationAutocomplete from "./UseLocationAutoComplete";
+import { jwtDecode } from "jwt-decode";
+import { AuthContext } from "../AuthContext";
 import "./companyprofile.css";
 
 const CompanyProfile = () => {
+  const { auth } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
+    companyId: "",
     companyName: "",
     location: "",
     about: "",
@@ -19,6 +23,16 @@ const CompanyProfile = () => {
   const [originalProfile, setOriginalProfile] = useState(profile);
   const [locationQuery, setLocationQuery] = useState("");
   const locationSuggestions = useLocationAutocomplete(locationQuery);
+
+  useEffect(() => {
+    if (auth.token) {
+      const decodedToken = jwtDecode(auth.token);
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        companyId: decodedToken.company.id,
+      }));
+    }
+  }, [auth.token]);
 
   const handleEditClick = () => {
     setOriginalProfile(profile);
@@ -120,10 +134,53 @@ const CompanyProfile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
-    if (validate()) {
-      setIsEditing(false);
-      // Save the profile data to the server or local storage
+  const handleSave = async () => {
+    if (!validate()) return;
+    try {
+      const token = localStorage.getItem("userToken");
+      const decodedToken = jwtDecode(token);
+      const companyId = decodedToken.company.id;
+
+      console.log("Decoded companyId:", companyId);
+
+      const formData = new FormData();
+      formData.append("companyId", companyId);
+      formData.append("location", profile.location);
+      formData.append("about", profile.about);
+      formData.append("numberOfEmployees", profile.numberOfEmployees);
+      formData.append("website", profile.website);
+      formData.append("contactEmail", profile.contactEmail);
+      formData.append("contactPhone", profile.contactPhone);
+      if (profile.logo) {
+        formData.append("logo", profile.logo);
+      }
+
+      // Log formData entries for debugging
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      const response = await fetch(
+        "http://localhost:4000/api/companies/editProfile",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setIsEditing(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to update profile:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 

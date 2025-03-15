@@ -56,24 +56,14 @@ module.exports = {
   },
 
   async editProfile(req, res) {
+    req.body = JSON.parse(JSON.stringify(req.body));
+
     try {
       console.log("editProfile", req.body);
       let candidate = await Candidates.findOne({ _id: req.body.candidateId });
       if (!candidate) {
         return Responder.respondWithError(req, res, "Candidate not found");
       }
-
-      // Validate experience array and handle missing fields
-      for (let exp of req.body.experience || []) {
-        if (!exp.role || !exp.company) {
-          return Responder.respondWithError(
-            req,
-            res,
-            "Experience entries must include role and company"
-          );
-        }
-      }
-
       candidate.currentJobTitle = req.body.currentJobTitle;
       candidate.location = req.body.location;
       candidate.about = req.body.about;

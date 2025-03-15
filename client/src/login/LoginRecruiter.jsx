@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "./login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginRecruiter = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const forbiddenDomains = ["gmail.com", "yahoo.com", "hotmail.com"];
 
@@ -34,21 +35,40 @@ const LoginRecruiter = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!emailError && email && password) {
-      // Handle login logic here
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        setMessage("Login successful.");
-      } else {
-        setMessage(
-          "Failed to login. Please check your credentials and try again."
+      try {
+        const response = await fetch(
+          "http://localhost:4000/api/companies/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          }
         );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Login response data:", data); // Log the response data
+          setMessage("Login successful.");
+          // Save user session (e.g., token) in localStorage or cookies
+          const token = data.message.token; // Access the token correctly
+          localStorage.setItem("userToken", token);
+          localStorage.setItem("userRole", "recruiter"); // Set the role
+          localStorage.setItem("keepLoggedIn", JSON.stringify(true)); // Set the keepLoggedIn flag
+          console.log("Token stored in localStorage:", token); // Log the token
+          // Navigate to profile page
+          navigate("/home");
+          window.location.reload();
+        } else {
+          const errorData = await response.json();
+          setMessage(
+            `Failed to login. ${errorData.message || "Please try again."}`
+          );
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+        setMessage("Failed to login. Please try again.");
       }
     }
   };

@@ -4,11 +4,7 @@ const User = require("./user");
 
 const CandidatesSchema = new Schema(
   {
-    name: {
-      type: String,
-      trim: true,
-      required: true,
-    },
+    name: { type: String, trim: true, required: true },
     email: {
       type: String,
       trim: true,
@@ -18,119 +14,52 @@ const CandidatesSchema = new Schema(
       unique: true,
       index: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
-    token: { type: String },
-    currentJobTitle: {
-      type: String,
-      trim: true,
-    },
-    location: {
-      type: String,
-      trim: true,
-    },
-    about: {
-      type: String,
-      trim: true,
-    },
-    resumeLink: {
-      type: String,
-      trim: true,
-    },
-    experience: {
-      type: [
-        {
-          companyName: {
-            type: String,
-            trim: true,
-            required: true,
-          },
-          position: {
-            type: String,
-            trim: true,
-            required: true,
-          },
-          startDate: {
-            type: Date,
-          },
-          endDate: {
-            type: Date,
-          },
-          description: {
-            type: String,
-            trim: true,
-          },
+    password: { type: String, required: true },
+    token: String,
+    currentJobTitle: { type: String, trim: true },
+    location: { type: String, trim: true },
+    about: { type: String, trim: true },
+    experience: [
+      {
+        company: { type: String, trim: true, required: true },
+        role: { type: String, trim: true, required: true },
+        startDate: Date,
+        endDate: Date,
+        description: { type: String, trim: true },
+      },
+    ],
+    education: [
+      {
+        school: { type: String, trim: true, required: true },
+        degree: { type: String, trim: true, required: true },
+        grade: {
+          type: String,
+          enum: ["A", "B", "C", "D", "E", "F"],
+          required: true,
         },
-      ],
+      },
+    ],
+    certifications: { type: String, default: "" },
+    links: {
+      github: { type: String, trim: true },
+      medium: { type: String, trim: true },
+      other: { type: String, trim: true },
     },
-    education: {
-      type: [
-        {
-          school: {
-            type: String,
-            trim: true,
-            required: true,
-          },
-          degree: {
-            type: String,
-            trim: true,
-            required: true,
-          },
-          grade: {
-            type: String,
-            enum: ["A", "B", "C", "D", "E", "F"],
-            required: true,
-          },
-        },
-      ],
-    },
-    certifications: [String],
-    githubLink: {
-      type: String,
-      trim: true,
-    },
-    mediumLink: {
-      type: String,
-      trim: true,
-    },
-    linedInLink: {
-      type: String,
-      trim: true,
-    },
-    otherLink: {
-      type: String,
-      trim: true,
-    },
-    rpaSkills: {
-      type: [String],
-    },
-    otherSkills: {
-      type: [String],
-    },
-    isActive: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
+    rpaSkills: [String],
+    otherSkills: [String],
+    isActive: { type: Boolean, required: true, default: true },
   },
-  {
-    timestamps: {
-      createdAt: true,
-      updatedAt: true,
-    },
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 CandidatesSchema.post("save", async function (doc, next) {
   try {
-    const existingUser = await User.findOne({ email: doc.email });
-    if (!existingUser) {
-      await User.create({ email: doc.email, password: doc.password });
-    }
+    if (!(await User.findOne({ email: doc.email })))
+      await User.create({
+        email: doc.email,
+        password: doc.password,
+        role: "candidate",
+      });
     next();
   } catch (error) {
     next(error);

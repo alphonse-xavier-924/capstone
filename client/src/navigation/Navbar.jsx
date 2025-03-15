@@ -17,7 +17,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
-          MyApp
+          OneStop
         </Link>
         <button
           className="navbar-toggler"
@@ -32,11 +32,13 @@ const Navbar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/home">
-                Home
-              </Link>
-            </li>
+            {auth.isAuthenticated && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/home">
+                  Home
+                </Link>
+              </li>
+            )}
             {auth.isAuthenticated && auth.role === "candidate" && (
               <>
                 <li className="nav-item">
@@ -54,13 +56,13 @@ const Navbar = () => {
             {auth.isAuthenticated && auth.role === "recruiter" && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/recruiter/profile">
-                    Company Profile
+                  <Link className="nav-link" to="/jobposting">
+                    Post Jobs
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/jobposting">
-                    Job Posting
+                  <Link className="nav-link" to="/recruiter/profile">
+                    Company Profile
                   </Link>
                 </li>
               </>
@@ -71,20 +73,7 @@ const Navbar = () => {
                   Logout
                 </button>
               </li>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login/professional">
-                    Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/signup/professional">
-                    Sign Up
-                  </Link>
-                </li>
-              </>
-            )}
+            ) : null}
           </ul>
         </div>
       </div>
