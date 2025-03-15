@@ -9,6 +9,7 @@ const connectDB = require("./config/database");
 const candidatesRoutes = require("./routes/candidates");
 const companiesRoutes = require("./routes/companies");
 const authRoutes = require("./routes/authRoutes");
+const jobRoutes = require("./routes/jobRoutes");
 
 // Create express app
 const app = express();
@@ -49,6 +50,7 @@ app.get("/api", (req, res) => {
 app.use("/api/candidates", candidatesRoutes);
 app.use("/api/companies", companiesRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 4000;
