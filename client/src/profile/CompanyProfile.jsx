@@ -1,11 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
-import useLocationAutocomplete from "./UseLocationAutoComplete";
+import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { AuthContext } from "../AuthContext";
+import useLocationAutocomplete from "./UseLocationAutoComplete";
 import "./companyprofile.css";
 
 const CompanyProfile = () => {
-  const { auth } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     companyId: "",
@@ -25,14 +23,61 @@ const CompanyProfile = () => {
   const locationSuggestions = useLocationAutocomplete(locationQuery);
 
   useEffect(() => {
-    if (auth.token) {
-      const decodedToken = jwtDecode(auth.token);
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        companyId: decodedToken.company.id,
-      }));
-    }
-  }, [auth.token]);
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("userToken");
+      const companyId = jwtDecode(token)?.company?.id;
+      console.log("Decoded companyId:", companyId);
+
+      if (!companyId) {
+        console.error("Company ID not found in token.");
+        return;
+      }
+
+      console.log("Decoded companyId:", companyId);
+
+      try {
+        const response = await fetch(
+          `http://localhost:4000/api/companies/${companyId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Fetched profile data:", data);
+
+        // Ensure data and message exist
+        const profileData = data?.message || {};
+        console.log(profileData);
+
+        const normalized = {
+          ...profileData,
+          companyId: profileData.companyId || "",
+          companyName: profileData.companyName || "",
+          location: profileData.location || "",
+          about: profileData.about || "",
+          numberOfEmployees: profileData.numberOfEmployees || "",
+          website: profileData.website || "",
+          logo: profileData.logo || null,
+          contactEmail: profileData.contactEmail || "",
+          contactPhone: profileData.contactPhone || "",
+        };
+
+        setProfile(normalized);
+        setOriginalProfile(normalized);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleEditClick = () => {
     setOriginalProfile(profile);
@@ -137,14 +182,8 @@ const CompanyProfile = () => {
   const handleSave = async () => {
     if (!validate()) return;
     try {
-      const token = localStorage.getItem("userToken");
-      const decodedToken = jwtDecode(token);
-      const companyId = decodedToken.company.id;
-
-      console.log("Decoded companyId:", companyId);
-
       const formData = new FormData();
-      formData.append("companyId", companyId);
+      formData.append("companyId", profile.companyId);
       formData.append("location", profile.location);
       formData.append("about", profile.about);
       formData.append("numberOfEmployees", profile.numberOfEmployees);
@@ -164,9 +203,6 @@ const CompanyProfile = () => {
         "http://localhost:4000/api/companies/editProfile",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${auth.token}`,
-          },
           body: formData,
         }
       );
