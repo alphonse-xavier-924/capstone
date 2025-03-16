@@ -51,3 +51,33 @@ exports.getActiveJobs = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getJobsByCompany = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const jobs = await Jobs.find({ companyId });
+    res.status(200).json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.toggleJobStatus = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const job = await Jobs.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    job.isActive = !job.isActive;
+    await job.save();
+
+    res.status(200).json({ message: "Job status updated successfully", data: job });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  
+};

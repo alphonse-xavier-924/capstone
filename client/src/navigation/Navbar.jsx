@@ -61,8 +61,13 @@ const Navbar = () => {
             {auth.isAuthenticated && auth.role === "recruiter" && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/jobposting">
-                    Post Jobs
+                  <Link className="nav-link" to="/recruiter/pastjobs">
+                    Jobs History
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/recruiter/jobposting">
+                    Post Job
                   </Link>
                 </li>
                 <li className="nav-item">

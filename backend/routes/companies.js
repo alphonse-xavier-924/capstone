@@ -29,4 +29,6 @@ router.post(
   companiesController.login.bind(companiesController)
 );
 
+router.get("/:companyId", companiesController.getCompanyById);
+
 module.exports = router;

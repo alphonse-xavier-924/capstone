@@ -16,4 +16,8 @@ router.post(
 
 router.get("/active-jobs", jobsController.getActiveJobs.bind(jobsController));
 
+router.get("/company/:companyId", jobsController.getJobsByCompany);
+
+router.patch("/toggleStatus/:jobId", jobsController.toggleJobStatus);
+
 module.exports = router;

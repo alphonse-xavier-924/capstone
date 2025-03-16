@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import "./jobposting.css";
 
 const Jobposting = () => {
@@ -19,6 +20,7 @@ const Jobposting = () => {
 
   const [skill, setSkill] = useState("");
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -100,6 +102,7 @@ const Jobposting = () => {
         const result = await response.json();
         console.log(result);
         alert("Job posted successfully!");
+        navigate("/recruiter/pastjobs"); // Redirect to Jobs History page
       } catch (error) {
         console.error("Error posting job:", error);
         alert("Failed to post job. Please try again.");

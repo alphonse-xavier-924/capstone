@@ -1,45 +1,82 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import "./home.css";
+import { AuthContext } from "../AuthContext";
 
-const Home = () => {
-  const [candidateName, setCandidateName] = useState("");
+const HomePage = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { auth } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchCandidateDetails = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem("userToken");
-      const candidateId = jwtDecode(token).candidate.id;
-      console.log("Decoded candidateId:", candidateId);
+      const decodedToken = jwtDecode(token);
+
+      console.log("role", auth.role);
 
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/candidates/${candidateId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.json();
-        console.log("Fetched candidate details:", data.message.name);
-        if (response.ok) {
-          setCandidateName(data.message.name);
+        let response;
+        if (auth.role === "recruiter") {
+          const companyId = decodedToken.company.id;
+          response = await fetch(
+            `http://localhost:4000/api/companies/${companyId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        } else if (auth.role === "candidate") {
+          const candidateId = decodedToken.candidate.id;
+          response = await fetch(
+            `http://localhost:4000/api/candidates/${candidateId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
         } else {
-          console.error("Failed to fetch candidate details:", data);
+          setError("Invalid role");
+          setLoading(false);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (auth.role === "recruiter") {
+          setData(result.message.companyName);
+          console.log("result", result.message.companyName);
+        } else {
+          setData(result.message.name);
+          console.log("result", result.message.name);
         }
       } catch (error) {
-        console.error("Error fetching candidate details:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchCandidateDetails();
-  }, []);
+    fetchData();
+  }, [auth.role]);
+
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
 
   return (
     <div className="home-container">
-      <h1>Welcome to OneStop Job Portal, {candidateName}</h1>
+      <h1>Welcome to the OneStop Job Portal{data && `, ${data}`}</h1>
     </div>
   );
 };
 
-export default Home;
+export default HomePage;

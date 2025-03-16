@@ -124,4 +124,23 @@ module.exports = {
       Responder.respondWithError(req, res, "Server Error");
     }
   },
+  async getCompanyById(req, res) {
+    const { companyId } = req.params;
+
+    try {
+      const company = await Companies.findById(companyId);
+      if (!company) {
+        return Responder.respondWithError(req, res, "Company not found");
+      }
+      Responder.respondWithSuccess(
+        req,
+        res,
+        "Company details fetched successfully",
+        company
+      );
+    } catch (err) {
+      console.error("Error in companies getCompanyById", err);
+      Responder.respondWithError(req, res, "Server Error");
+    }
+  },
 };
