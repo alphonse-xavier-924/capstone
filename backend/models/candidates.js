@@ -39,7 +39,7 @@ const CandidatesSchema = new Schema(
         },
       },
     ],
-    certifications: { type: String, default: "" },
+    certifications: { type: String },
     links: {
       github: { type: String, trim: true },
       medium: { type: String, trim: true },

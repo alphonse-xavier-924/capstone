@@ -49,36 +49,78 @@ const StudentProfile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const token = localStorage.getItem("userToken");
+      const candidateId = jwtDecode(token)?.candidate?.id;
+
+      if (!candidateId) {
+        console.error("Candidate ID not found in token.");
+        return;
+      }
+
+      console.log("Decoded candidateId:", candidateId);
+
       try {
         const response = await fetch(
-          "http://localhost:4000/api/candidates/profile",
+          `http://localhost:4000/api/candidates/${candidateId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.statusText}`);
+        }
+
         const data = await response.json();
+        console.log("Fetched profile data:", data);
+
+        // Ensure data and message exist
+        const profileData = data?.message || {};
+        console.log(profileData);
+
         const normalized = {
-          ...data,
-          experience: Array.isArray(data.experience) ? data.experience : [],
-          education: Array.isArray(data.education) ? data.education : [],
-          links: data.links
+          ...profileData,
+          certifications: profileData.certifications || "",
+          experience: Array.isArray(profileData.experience)
+            ? profileData.experience.map((exp) => ({
+                ...exp,
+                startDate: exp.startDate
+                  ? new Date(exp.startDate).toISOString().split("T")[0]
+                  : "",
+                endDate: exp.endDate
+                  ? new Date(exp.endDate).toISOString().split("T")[0]
+                  : "",
+              }))
+            : [],
+          education: Array.isArray(profileData.education)
+            ? profileData.education
+            : [],
+          links: profileData.links
             ? {
-                github: data.links.github || "",
-                medium: data.links.medium || "",
-                other: data.links.other || "",
+                github: profileData.links.github || "",
+                medium: profileData.links.medium || "",
+                other: profileData.links.other || "",
               }
             : { github: "", medium: "", other: "" },
-          rpaSkills: Array.isArray(data.rpaSkills) ? data.rpaSkills : [],
-          otherSkills: Array.isArray(data.otherSkills) ? data.otherSkills : [],
+          rpaSkills: Array.isArray(profileData.rpaSkills)
+            ? profileData.rpaSkills
+            : [],
+          otherSkills: Array.isArray(profileData.otherSkills)
+            ? profileData.otherSkills
+            : [],
+          createdAt: profileData.createdAt || "",
+          updatedAt: profileData.updatedAt || "",
         };
+
         setProfile(normalized);
         setOriginalProfile(normalized);
       } catch (error) {
         console.error("Error fetching profile data:", error);
       }
     };
+
     fetchProfile();
   }, []);
 
@@ -112,11 +154,11 @@ const StudentProfile = () => {
   const handleJobTitleChange = (e) => {
     const { value } = e.target;
     setJobTitleQuery(value);
-    setProfile((prev) => ({ ...prev, jobTitle: value }));
+    setProfile((prev) => ({ ...prev, currentJobTitle: value }));
   };
 
   const handleJobTitleSelect = (title) => {
-    setProfile((prev) => ({ ...prev, jobTitle: title }));
+    setProfile((prev) => ({ ...prev, currentJobTitle: title }));
     setJobTitleQuery("");
   };
 
@@ -298,7 +340,7 @@ const StudentProfile = () => {
               type="text"
               name="jobTitle"
               placeholder="Student, Automation Intern..."
-              value={profile.jobTitle}
+              value={profile.currentJobTitle}
               onChange={handleJobTitleChange}
             />
             {jobTitleQuery && (
@@ -312,7 +354,7 @@ const StudentProfile = () => {
             )}
           </div>
         ) : (
-          <p>{profile.jobTitle}</p>
+          <p>{profile.currentJobTitle}</p>
         )}
       </div>
       <div className="profile-section">

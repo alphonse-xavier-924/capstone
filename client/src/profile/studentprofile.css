@@ -3,33 +3,37 @@
   margin: 50px auto;
   background-color: #ffffff;
   padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  border: 2px solid #e3e3e3;
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .profile-header h2 {
   margin: 0;
   color: #333;
+  font-weight: 600;
+  font-size: 28px;
 }
 
 .edit-button {
   background-color: #007bff;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
+  border-radius: 8px;
+  padding: 10px 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .edit-button i {
@@ -46,28 +50,33 @@
 }
 
 .profile-section {
-  margin-top: 20px;
+  margin-top: 25px;
+  border-top: 2px solid #e3e3e3;
+  padding-top: 15px;
 }
 
 .profile-section label {
   font-weight: bold;
-  color: #333;
+  color: #222;
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  font-size: 16px;
 }
 
 .profile-section p {
-  margin: 5px 0;
-  color: #555;
+  margin: 5px 0 15px;
+  color: #666;
+  line-height: 1.6;
 }
 
 .profile-section input,
 .profile-section textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-top: 5px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
+  background-color: #fafafa;
   transition: border-color 0.3s ease;
 }
 
@@ -77,37 +86,15 @@
   outline: none;
 }
 
-.location-suggestions,
-.job-title-suggestions {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  max-height: 150px;
-  overflow-y: auto;
-  background-color: #fff;
-}
-
-.location-suggestions li,
-.job-title-suggestions li {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.location-suggestions li:hover,
-.job-title-suggestions li:hover {
-  background-color: #f0f0f0;
-}
-
 .experience-item,
 .education-item,
 .other-skill-item {
   margin-bottom: 20px;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #e0e0e0;
-  border-radius: 5px;
+  border-radius: 8px;
   background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .experience-item button,
@@ -117,8 +104,8 @@
   background-color: #dc3545;
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
+  border-radius: 6px;
+  padding: 6px 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -130,17 +117,18 @@
 }
 
 .add-button {
-  margin-top: 10px;
+  margin-top: 15px;
   background-color: #28a745;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   padding: 10px 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .add-button i {
@@ -151,31 +139,29 @@
   background-color: #218838;
 }
 
-.save-button {
+.save-button,
+.cancel-button {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.save-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px;
 }
 
 .save-button:hover {
   background-color: #0056b3;
-}
-
-.cancel-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-left: 10px;
 }
 
 .cancel-button:hover {
@@ -196,57 +182,30 @@
 .skill-item {
   display: flex;
   align-items: center;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.skill-item input[type="checkbox"] {
-  margin-right: 10px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
 }
 
 .skill-badge {
   display: inline-block;
-  padding: 5px 10px;
+  padding: 6px 12px;
   margin: 5px;
   background-color: #007bff;
   color: white;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
-.other-skill-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.other-skill-item input {
-  flex: 1;
-}
-
-.other-skill-item button {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.other-skill-item button:hover {
-  background-color: #c82333;
-}
-
-/* Styles for react-select */
+/* React-Select Styles */
 .basic-multi-select {
   margin-top: 5px;
 }
 
 .basic-multi-select .select__control {
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   transition: border-color 0.3s ease;
 }
 
@@ -258,7 +217,7 @@
 .basic-multi-select .select__multi-value {
   background-color: #007bff;
   color: white;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 .basic-multi-select .select__multi-value__label {

@@ -29,4 +29,11 @@ router.post(
   candidateController.login.bind(candidateController)
 );
 
+router.get(
+  "/:candidateId",
+  Validation.validateCandidateId(),
+  Responder.validate.bind(Responder),
+  candidateController.getCandidateById.bind(candidateController)
+);
+
 module.exports = router;

@@ -20,6 +20,7 @@ import Home from "./home/Home";
 import { AuthProvider } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute";
 import Joblist from "./joblist/Joblist";
+import Applications from "./applications/Applications";
 
 function App() {
   const isLoggedIn = JSON.parse(localStorage.getItem("keepLoggedIn"));
@@ -64,6 +65,15 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/professional/applications"
+              element={
+                <PrivateRoute>
+                  <Applications />
+                </PrivateRoute>
+              }
+            />
+
             <Route
               path="/recruiter/profile"
               element={

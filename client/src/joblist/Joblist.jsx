@@ -92,6 +92,11 @@ const Joblist = () => {
     return appliedJobs.some((application) => application.jobId === jobId);
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div className="joblist-container">
       <h2>Job Listings</h2>
@@ -114,6 +119,9 @@ const Joblist = () => {
             </p>
             <p>
               <strong>Required Skills:</strong> {job.skills.join(", ")}
+            </p>
+            <p>
+              <strong>Posted on:</strong> {formatDate(job.createdAt)}
             </p>
             {hasApplied(job._id) ? (
               <button style={{ backgroundColor: "green" }}>

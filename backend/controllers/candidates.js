@@ -84,4 +84,24 @@ module.exports = {
       Responder.respondWithError(req, res, "Server Error");
     }
   },
+
+  async getCandidateById(req, res) {
+    const { candidateId } = req.params;
+
+    try {
+      const candidate = await Candidates.findById(candidateId);
+      if (!candidate) {
+        return Responder.respondWithError(req, res, "Candidate not found");
+      }
+      Responder.respondWithSuccess(
+        req,
+        res,
+        "Candidate details fetched successfully",
+        candidate
+      );
+    } catch (err) {
+      console.error("Error in candidates getCandidateById", err);
+      Responder.respondWithError(req, res, "Server Error");
+    }
+  },
 };
