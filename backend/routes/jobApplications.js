@@ -22,4 +22,10 @@ router.get(
   jobApplicationsController.getJobsByCandidateId.bind(jobApplicationsController)
 );
 
+router.get("/job/:jobId", jobApplicationsController.getApplicationsByJobId);
+router.patch(
+  "/:applicationId/status",
+  jobApplicationsController.updateApplicationStatus
+);
+
 module.exports = router;

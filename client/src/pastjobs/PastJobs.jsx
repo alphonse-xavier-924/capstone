@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import "./pastjobs.css";
 
 const PastJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -65,12 +67,18 @@ const PastJobs = () => {
       const updatedJob = await response.json();
       setJobs((prevJobs) =>
         prevJobs.map((job) =>
-          job._id === jobId ? { ...job, isActive: updatedJob.data.isActive } : job
+          job._id === jobId
+            ? { ...job, isActive: updatedJob.data.isActive }
+            : job
         )
       );
     } catch (error) {
       setError(error.message);
     }
+  };
+
+  const viewApplications = (jobId) => {
+    navigate(`/applications/${jobId}`);
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -97,10 +105,18 @@ const PastJobs = () => {
               <p>Veteran: {job.veteran ? "Yes" : "No"}</p>
               <p>Disabilities: {job.disabilities ? "Yes" : "No"}</p>
               <button
-                className={`toggle-status-btn ${job.isActive ? "active" : "inactive"}`}
+                className={`toggle-status-btn ${
+                  job.isActive ? "active" : "inactive"
+                }`}
                 onClick={() => toggleJobStatus(job._id)}
               >
                 {job.isActive ? "Deactivate" : "Activate"}
+              </button>
+              <button
+                className="view-applications-btn"
+                onClick={() => viewApplications(job._id)}
+              >
+                View Applications
               </button>
             </li>
           ))}

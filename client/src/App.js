@@ -22,6 +22,7 @@ import PrivateRoute from "./PrivateRoute";
 import Joblist from "./joblist/Joblist";
 import Applications from "./applications/Applications";
 import PastJobs from "./pastjobs/PastJobs";
+import ViewApplications from "./viewapplications/ViewApplications";
 
 function App() {
   const isLoggedIn = JSON.parse(localStorage.getItem("keepLoggedIn"));
@@ -96,6 +97,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <PastJobs />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/applications/:jobId"
+              element={
+                <PrivateRoute>
+                  <ViewApplications />
                 </PrivateRoute>
               }
             />

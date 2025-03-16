@@ -1,72 +1,46 @@
 .past-jobs-container {
   padding: 20px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f4f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 0 auto;
 }
 
-.past-jobs-container h1 {
+.loading,
+.error {
   text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 2em;
+  font-size: 18px;
+  margin-top: 20px;
 }
 
-.past-jobs-container ul {
+ul {
   list-style-type: none;
   padding: 0;
 }
 
-.past-jobs-container li {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 15px;
-  background-color: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
+li {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
 
-.past-jobs-container li:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-.past-jobs-container li h2 {
-  margin: 0 0 10px;
-  color: #0073e6;
-  font-size: 1.5em;
-}
-
-.past-jobs-container li p {
-  margin: 5px 0;
-  color: #555;
-}
-
-.past-jobs-container .loading,
-.past-jobs-container .error {
-  text-align: center;
-  font-size: 18px;
-  color: #ff0000;
-}
-
-.toggle-status-btn {
+.toggle-status-btn,
+.view-applications-btn {
+  margin-right: 10px;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 1em;
-  margin-top: 10px;
 }
 
 .toggle-status-btn.active {
-  background-color: #ff4d4d;
+  background-color: #f44336;
   color: white;
 }
 
 .toggle-status-btn.inactive {
   background-color: #4caf50;
+  color: white;
+}
+
+.view-applications-btn {
+  background-color: #2196f3;
   color: white;
 }
