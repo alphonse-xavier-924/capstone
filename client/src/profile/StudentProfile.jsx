@@ -26,6 +26,7 @@ const rpaToolOptions = rpaTools.map((tool) => ({ value: tool, label: tool }));
 
 const StudentProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [profile, setProfile] = useState({
     jobTitle: "",
     location: "",
@@ -123,6 +124,41 @@ const StudentProfile = () => {
 
     fetchProfile();
   }, []);
+
+  const handleGenerateAbout = async () => {
+    setIsGenerating(true); // Indicate that generation is in progress
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_HF_API_KEY}`,
+          },
+          body: JSON.stringify({
+            inputs: `Generate professional summary for an RPA developer profile with these details: ${profile.about}`,
+            parameters: {
+              max_new_tokens: 150,
+              temperature: 0.7,
+            },
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Generated data:", data);
+      console.log("Generated text:", data[0]?.generated_text);
+      const generatedText =
+        data[0]?.generated_text || "Failed to generate text.";
+      setProfile((prev) => ({ ...prev, about: generatedText })); // Replace the "about" section
+    } catch (error) {
+      console.error("Generation failed:", error);
+      alert("Failed to generate content. Please try again.");
+    } finally {
+      setIsGenerating(false); // Reset the generating state
+    }
+  };
 
   const handleEditClick = () => {
     setOriginalProfile(profile);
@@ -354,7 +390,7 @@ const StudentProfile = () => {
             )}
           </div>
         ) : (
-          <p>{profile.currentJobTitle}</p>
+          <p>{profile.cu}</p>
         )}
       </div>
       <div className="profile-section">
@@ -384,12 +420,23 @@ const StudentProfile = () => {
       <div className="profile-section">
         <label>About:</label>
         {isEditing ? (
-          <textarea
-            name="about"
-            value={profile.about}
-            onChange={handleChange}
-            maxLength="2600"
-          />
+          <div>
+            <textarea
+              name="about"
+              value={profile.about}
+              placeholder="Tell us about yourself...(If you'd like help generating content, please enter a two sentences about yourself and click on the 'Click Generate' button below)"
+              onChange={handleChange}
+              maxLength="2600"
+            />
+            <button
+              type="button"
+              className="generate-button"
+              onClick={handleGenerateAbout}
+              disabled={isGenerating}
+            >
+              {isGenerating ? "Generating..." : "Click Generate"}
+            </button>
+          </div>
         ) : (
           <p>{profile.about}</p>
         )}

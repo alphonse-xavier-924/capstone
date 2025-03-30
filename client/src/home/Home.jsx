@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import "./home.css";
 import { AuthContext } from "../AuthContext";
 
@@ -8,7 +8,6 @@ const HomePage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
   const { auth } = useContext(AuthContext);
 
   useEffect(() => {
