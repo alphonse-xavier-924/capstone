@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./resetpassword.css";
 
@@ -7,6 +7,10 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const { token } = useParams();
+
+  useEffect(() => {
+    console.log("Token from URL:", token); // Verify token capture
+  }, [token]);
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -22,7 +26,7 @@ const ResetPassword = () => {
       setMessage("Passwords do not match");
       return;
     }
-
+    console.log("Token:", token);
     try {
       const response = await fetch(
         `http://localhost:4000/api/auth/reset-password/${token}`,

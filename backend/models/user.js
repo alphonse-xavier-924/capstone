@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    required: true,
+    required: false, // Make this optional
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,

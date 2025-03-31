@@ -66,4 +66,6 @@ CandidatesSchema.post("save", async function (doc, next) {
   }
 });
 
-module.exports = mongoose.model("Candidates", CandidatesSchema);
+// Use mongoose.models to prevent overwriting the model
+module.exports =
+  mongoose.models.Candidates || mongoose.model("Candidates", CandidatesSchema);

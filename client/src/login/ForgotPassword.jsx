@@ -29,6 +29,7 @@ const ForgotPassword = () => {
           "If an account with this email exists, you will receive a password reset link shortly"
         );
       } else {
+        console.log("Received email:", email);
         setMessage(
           "If an account with this email exists, you will receive a password reset link shortly"
         );
