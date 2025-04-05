@@ -368,6 +368,7 @@ const StudentProfile = () => {
           <i className="bi bi-pen"></i> Edit
         </button>
       </div>
+
       <div className="profile-section">
         <label>Job Title:</label>
         {isEditing ? (
@@ -390,9 +391,10 @@ const StudentProfile = () => {
             )}
           </div>
         ) : (
-          <p>{profile.cu}</p>
+          <p>{profile.currentJobTitle}</p>
         )}
       </div>
+
       <div className="profile-section">
         <label>Location:</label>
         {isEditing ? (
@@ -417,6 +419,7 @@ const StudentProfile = () => {
           <p>{profile.location}</p>
         )}
       </div>
+
       <div className="profile-section">
         <label>About:</label>
         {isEditing ? (
@@ -428,19 +431,22 @@ const StudentProfile = () => {
               onChange={handleChange}
               maxLength="2600"
             />
-            <button
-              type="button"
-              className="generate-button"
-              onClick={handleGenerateAbout}
-              disabled={isGenerating}
-            >
-              {isGenerating ? "Generating..." : "Click Generate"}
-            </button>
+            <div className="item-actions">
+              <button
+                type="button"
+                className="generate-button"
+                onClick={handleGenerateAbout}
+                disabled={isGenerating}
+              >
+                {isGenerating ? "Generating..." : "Click Generate"}
+              </button>
+            </div>
           </div>
         ) : (
           <p>{profile.about}</p>
         )}
       </div>
+
       <div className="profile-section">
         <label>Resume:</label>
         {isEditing ? (
@@ -456,6 +462,7 @@ const StudentProfile = () => {
           profile.resume && <p>{profile.resume.name}</p>
         )}
       </div>
+
       <div className="profile-section">
         <label>Experience:</label>
         {isEditing ? (
@@ -500,18 +507,25 @@ const StudentProfile = () => {
                   value={exp.description}
                   onChange={(e) => handleExperienceChange(i, e)}
                 />
-                <button type="button" onClick={() => handleRemoveExperience(i)}>
-                  Remove
-                </button>
+                <div className="item-actions">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExperience(i)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
-            <button
-              type="button"
-              className="add-button"
-              onClick={handleAddExperience}
-            >
-              <i className="bi bi-plus-circle"></i> Add Experience
-            </button>
+            <div className="item-actions">
+              <button
+                type="button"
+                className="add-button"
+                onClick={handleAddExperience}
+              >
+                <i className="bi bi-plus-circle"></i> Add Experience
+              </button>
+            </div>
           </>
         ) : (
           (profile.experience || []).map((exp, i) => (
@@ -525,6 +539,7 @@ const StudentProfile = () => {
           ))
         )}
       </div>
+
       <div className="profile-section">
         <label>Education:</label>
         {isEditing ? (
@@ -561,18 +576,25 @@ const StudentProfile = () => {
                 {errors[`education-${i}-grade`] && (
                   <p className="error">{errors[`education-${i}-grade`]}</p>
                 )}
-                <button type="button" onClick={() => handleRemoveEducation(i)}>
-                  Remove
-                </button>
+                <div className="item-actions">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveEducation(i)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
-            <button
-              type="button"
-              className="add-button"
-              onClick={handleAddEducation}
-            >
-              <i className="bi bi-plus-circle"></i> Add Education
-            </button>
+            <div className="item-actions">
+              <button
+                type="button"
+                className="add-button"
+                onClick={handleAddEducation}
+              >
+                <i className="bi bi-plus-circle"></i> Add Education
+              </button>
+            </div>
           </>
         ) : (
           (profile.education || []).map((edu, i) => (
@@ -584,6 +606,7 @@ const StudentProfile = () => {
           ))
         )}
       </div>
+
       <div className="profile-section">
         <label>Certifications:</label>
         {isEditing ? (
@@ -596,6 +619,7 @@ const StudentProfile = () => {
           <p>{profile.certifications}</p>
         )}
       </div>
+
       <div className="profile-section">
         <label>Links:</label>
         {isEditing ? (
@@ -630,6 +654,7 @@ const StudentProfile = () => {
           </div>
         )}
       </div>
+
       <div className="profile-section">
         <label>RPA Skills:</label>
         {isEditing ? (
@@ -649,6 +674,7 @@ const StudentProfile = () => {
           </ul>
         )}
       </div>
+
       <div className="profile-section">
         <label>Other Skills:</label>
         {isEditing ? (
@@ -660,18 +686,25 @@ const StudentProfile = () => {
                   value={s}
                   onChange={(e) => handleOtherSkillChange(i, e)}
                 />
-                <button type="button" onClick={() => handleRemoveOtherSkill(i)}>
-                  Remove
-                </button>
+                <div className="item-actions">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveOtherSkill(i)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
-            <button
-              type="button"
-              className="add-button"
-              onClick={handleAddOtherSkill}
-            >
-              <i className="bi bi-plus-circle"></i> Add Skill
-            </button>
+            <div className="item-actions">
+              <button
+                type="button"
+                className="add-button"
+                onClick={handleAddOtherSkill}
+              >
+                <i className="bi bi-plus-circle"></i> Add Skill
+              </button>
+            </div>
           </>
         ) : (
           <ul>
@@ -681,8 +714,9 @@ const StudentProfile = () => {
           </ul>
         )}
       </div>
+
       {isEditing && (
-        <div className="profile-actions">
+        <div className="button-row">
           <button className="save-button" onClick={handleSave}>
             Save
           </button>
@@ -694,5 +728,4 @@ const StudentProfile = () => {
     </div>
   );
 };
-
 export default StudentProfile;

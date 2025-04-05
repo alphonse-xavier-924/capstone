@@ -1,241 +1,217 @@
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --text-dark: #1e293b;
+  --text-medium: #475569;
+  --border: #e2e8f0;
+  --bg-light: #f8fafc;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  background-color: #f1f5f9;
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text-dark);
+}
+
 .student-profile {
-  width: 60%;
-  margin: 50px auto;
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 2px solid #e3e3e3;
+  max-width: 1000px;
+  margin: 2.5rem auto;
+  padding: 3rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .profile-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
   margin: 0;
-  color: #333;
-  font-weight: 600;
-  font-size: 28px;
+  color: var(--text-dark);
 }
 
 .edit-button {
-  background-color: #007bff;
-  color: #fff;
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
   border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-.edit-button i {
-  margin-right: 5px;
+.edit-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
-.edit-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.edit-button:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
+/* Section Styles */
 .profile-section {
-  margin-top: 25px;
-  border-top: 2px solid #e3e3e3;
-  padding-top: 15px;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
 }
 
-.profile-section label {
-  font-weight: bold;
-  color: #222;
+.profile-section:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.profile-section strong {
   display: block;
-  margin-bottom: 8px;
-  font-size: 16px;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  color: var(--text-medium);
 }
 
-.profile-section p {
-  margin: 5px 0 15px;
-  color: #666;
+.profile-section p,
+.profile-section li {
+  font-size: 1rem;
   line-height: 1.6;
+  color: var(--text-dark);
+  margin: 0.25rem 0;
 }
 
-.profile-section input,
-.profile-section textarea {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fafafa;
-  transition: border-color 0.3s ease;
+/* Experience & Education Boxes */
+.experience-item {
+  background: var(--bg-light);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  margin-top: 1rem;
+  border: 1px solid var(--border);
 }
 
-.profile-section input:focus,
-.profile-section textarea:focus {
-  border-color: #007bff;
-  outline: none;
+.experience-item p {
+  margin: 0.4rem 0;
 }
 
-.experience-item,
-.education-item,
-.other-skill-item {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.experience-item button,
-.education-item button,
-.other-skill-item button {
-  margin-top: 10px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.experience-item button:hover,
-.education-item button:hover,
-.other-skill-item button:hover {
-  background-color: #c82333;
-}
-
-.add-button {
-  margin-top: 15px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.add-button i {
-  margin-right: 5px;
-}
-
-.add-button:hover {
-  background-color: #218838;
-}
-
-.save-button,
-.cancel-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.save-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.cancel-button {
-  background-color: #dc3545;
-  color: white;
-  margin-left: 10px;
-}
-
-.save-button:hover {
-  background-color: #0056b3;
-}
-
-.cancel-button:hover {
-  background-color: #c82333;
-}
-
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-}
-
+/* Skill Tags */
 .skills-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .skill-item {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f1f1f1;
+  background: #e2e8f0;
+  color: var(--text-dark);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-.skill-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  margin: 5px;
-  background-color: #007bff;
+/* Input/Field Groups */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Buttons */
+button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.add-button {
+  background: var(--success);
   color: white;
-  border-radius: 8px;
-  font-weight: bold;
 }
 
-/* React-Select Styles */
+.delete-button {
+  background: var(--danger);
+  color: white;
+}
+
+.cancel-button {
+  background: var(--text-medium);
+  color: white;
+}
+
+.save-button {
+  background: var(--primary);
+  color: white;
+}
+
+/* Button Grouping */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+}
+
+
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Multi-select dropdown fix */
 .basic-multi-select {
-  margin-top: 5px;
+  margin: 1rem 0;
 }
 
 .basic-multi-select .select__control {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.3s ease;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
 }
 
-.basic-multi-select .select__control--is-focused {
-  border-color: #007bff;
-  box-shadow: none;
-}
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .student-profile {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
 
-.basic-multi-select .select__multi-value {
-  background-color: #007bff;
-  color: white;
-  border-radius: 8px;
-}
-
-.basic-multi-select .select__multi-value__label {
-  color: white;
-}
-
-.basic-multi-select .select__multi-value__remove {
-  color: white;
-}
-
-.basic-multi-select .select__multi-value__remove:hover {
-  background-color: #0056b3;
-  color: white;
-}
-
-/* Error message styles */
-.profile-section .error {
-  color: #dc3545;
-  font-size: 0.875em;
-  margin-top: 5px;
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 }
