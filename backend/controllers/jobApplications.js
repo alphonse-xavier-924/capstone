@@ -35,7 +35,7 @@ exports.getJobsByCandidateId = async (req, res) => {
   const { candidateId } = req.params;
 
   try {
-    const jobApplications = await JobApplications.find({ candidateId });
+    const jobApplications = await JobApplications.find({ candidateId }).populate('companyId', 'companyName').populate('jobId', 'jobTitle');
     res.status(200).json(jobApplications);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch job applications" });
@@ -46,7 +46,7 @@ exports.getApplicationsByJobId = async (req, res) => {
   const { jobId } = req.params;
 
   try {
-    const jobApplications = await JobApplications.find({ jobId });
+    const jobApplications = await JobApplications.find({ jobId }).populate('candidateId', 'name').populate('jobId', 'jobTitle');
     res.status(200).json(jobApplications);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch job applications" });

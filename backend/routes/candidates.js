@@ -4,8 +4,9 @@ const router = express.Router();
 const candidateController = require("@controllers/candidates");
 const Validation = require("@validation");
 const Responder = require("@service/responder");
-const multer = require("multer");
-const upload = multer();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/',  });
+
 
 router.post(
   "/signup",
@@ -16,9 +17,9 @@ router.post(
 
 router.post(
   "/editProfile",
-  upload.none(), // Use multer to parse FormData
-  Validation.editProfile(),
-  Responder.validate.bind(Responder),
+  upload.single('file'),
+  // Validation.editProfile(),
+  // Responder.validate.bind(Responder),
   candidateController.editProfile.bind(candidateController)
 );
 

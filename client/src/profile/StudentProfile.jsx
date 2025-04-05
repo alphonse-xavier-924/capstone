@@ -28,6 +28,7 @@ const StudentProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [profile, setProfile] = useState({
+    currentJobTitle: "",
     jobTitle: "",
     location: "",
     about: "",
@@ -49,81 +50,85 @@ const StudentProfile = () => {
   const [originalProfile, setOriginalProfile] = useState(profile);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem("userToken");
-      const candidateId = jwtDecode(token)?.candidate?.id;
-
-      if (!candidateId) {
-        console.error("Candidate ID not found in token.");
-        return;
-      }
-
-      console.log("Decoded candidateId:", candidateId);
-
-      try {
-        const response = await fetch(
-          `http://localhost:4000/api/candidates/${candidateId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch profile: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log("Fetched profile data:", data);
-
-        // Ensure data and message exist
-        const profileData = data?.message || {};
-        console.log(profileData);
-
-        const normalized = {
-          ...profileData,
-          certifications: profileData.certifications || "",
-          experience: Array.isArray(profileData.experience)
-            ? profileData.experience.map((exp) => ({
-                ...exp,
-                startDate: exp.startDate
-                  ? new Date(exp.startDate).toISOString().split("T")[0]
-                  : "",
-                endDate: exp.endDate
-                  ? new Date(exp.endDate).toISOString().split("T")[0]
-                  : "",
-              }))
-            : [],
-          education: Array.isArray(profileData.education)
-            ? profileData.education
-            : [],
-          links: profileData.links
-            ? {
-                github: profileData.links.github || "",
-                medium: profileData.links.medium || "",
-                other: profileData.links.other || "",
-              }
-            : { github: "", medium: "", other: "" },
-          rpaSkills: Array.isArray(profileData.rpaSkills)
-            ? profileData.rpaSkills
-            : [],
-          otherSkills: Array.isArray(profileData.otherSkills)
-            ? profileData.otherSkills
-            : [],
-          createdAt: profileData.createdAt || "",
-          updatedAt: profileData.updatedAt || "",
-        };
-
-        setProfile(normalized);
-        setOriginalProfile(normalized);
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-      }
-    };
-
+   
     fetchProfile();
   }, []);
+
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("userToken");
+    const candidateId = jwtDecode(token)?.candidate?.id;
+
+    if (!candidateId) {
+      console.error("Candidate ID not found in token.");
+      return;
+    }
+
+    console.log("Decoded candidateId:", candidateId);
+
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/candidates/${candidateId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch profile: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Fetched profile data:", data);
+
+      // Ensure data and message exist
+      const profileData = data?.message || {};
+      console.log(profileData);
+
+      const normalized = {
+        ...profileData,
+        jobTitle: profileData.currentJobTitle || "",
+        currentJobTitle: profileData.currentJobTitle || "",
+        certifications: profileData.certifications || "",
+        experience: Array.isArray(profileData.experience)
+          ? profileData.experience.map((exp) => ({
+              ...exp,
+              startDate: exp.startDate
+                ? new Date(exp.startDate).toISOString().split("T")[0]
+                : "",
+              endDate: exp.endDate
+                ? new Date(exp.endDate).toISOString().split("T")[0]
+                : "",
+            }))
+          : [],
+        education: Array.isArray(profileData.education)
+          ? profileData.education
+          : [],
+        links: profileData.links
+          ? {
+              github: profileData.links.github || "",
+              medium: profileData.links.medium || "",
+              other: profileData.links.other || "",
+            }
+          : { github: "", medium: "", other: "" },
+        rpaSkills: Array.isArray(profileData.rpaSkills)
+          ? profileData.rpaSkills
+          : [],
+        otherSkills: Array.isArray(profileData.otherSkills)
+          ? profileData.otherSkills
+          : [],
+        createdAt: profileData.createdAt || "",
+        updatedAt: profileData.updatedAt || "",
+      };
+
+      setProfile(normalized);
+      setOriginalProfile(normalized);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
+
 
   const handleGenerateAbout = async () => {
     setIsGenerating(true); // Indicate that generation is in progress
@@ -190,11 +195,11 @@ const StudentProfile = () => {
   const handleJobTitleChange = (e) => {
     const { value } = e.target;
     setJobTitleQuery(value);
-    setProfile((prev) => ({ ...prev, currentJobTitle: value }));
+    setProfile((prev) => ({ ...prev, jobTitle: value }));
   };
 
   const handleJobTitleSelect = (title) => {
-    setProfile((prev) => ({ ...prev, currentJobTitle: title }));
+    setProfile((prev) => ({ ...prev, jobTitle: title }));
     setJobTitleQuery("");
   };
 
@@ -285,6 +290,8 @@ const StudentProfile = () => {
       : alert("Invalid file type");
   };
 
+
+
   const validate = () => {
     const newErrors = {};
     (profile.experience || []).forEach((exp, i) => {
@@ -307,7 +314,7 @@ const StudentProfile = () => {
     if (!validate()) return;
     try {
       const formData = new FormData();
-      formData.append("resume", profile.resume);
+      formData.append("file", profile.resume);
       formData.append(
         "candidateId",
         jwtDecode(localStorage.getItem("userToken")).candidate.id
@@ -350,6 +357,7 @@ const StudentProfile = () => {
         setProfile(updated);
         setOriginalProfile(updated);
         setIsEditing(false);
+        fetchProfile();
       } else console.error("Save failed:", await response.json());
     } catch (error) {
       console.error("Save error:", error);
@@ -377,7 +385,7 @@ const StudentProfile = () => {
               type="text"
               name="jobTitle"
               placeholder="Student, Automation Intern..."
-              value={profile.currentJobTitle}
+              value={profile.jobTitle}
               onChange={handleJobTitleChange}
             />
             {jobTitleQuery && (

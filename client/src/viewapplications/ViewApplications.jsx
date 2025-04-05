@@ -91,7 +91,7 @@ const ViewApplications = () => {
           {applications.map((application) => (
             <li key={application._id}>
               <p>
-                <strong>Candidate ID:</strong> {application.candidateId}
+                <strong>Candidate Name:</strong> {application.candidateId.name}
               </p>
               <p>
                 <strong>Status:</strong>

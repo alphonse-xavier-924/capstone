@@ -45,7 +45,7 @@ exports.createJob = async (req, res) => {
 
 exports.getActiveJobs = async (req, res) => {
   try {
-    const activeJobs = await Jobs.find({ isActive: true });
+    const activeJobs = await Jobs.find({ isActive: true }).populate('companyId', 'companyName');
     res.status(200).json(activeJobs);
   } catch (error) {
     res.status(500).json({ error: error.message });

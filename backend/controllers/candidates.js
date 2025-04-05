@@ -3,6 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Candidates = require("@models/Candidates");
 const Responder = require("@service/responder");
+const { uploadToBucket } = require("@config/aws-sdk");
+const RESUME_FOLDER = "resumes/";
+const { appendDateToFileName } = require('@service/commonFunc');
 
 module.exports = {
   async signup(req, res) {
@@ -63,6 +66,15 @@ module.exports = {
       let candidate = await Candidates.findOne({ _id: req.body.candidateId });
       if (!candidate) {
         return Responder.respondWithError(req, res, "Candidate not found");
+      }
+
+      if(req.file) {
+        let imgUploadRes = await uploadToBucket(req, `${RESUME_FOLDER}${appendDateToFileName(req.file.originalname.split(".m")[0])}`);
+
+        if(!imgUploadRes.status){
+          return Responder.respondWithError(req, res, imgUploadRes.file);
+        }
+        candidate.resume = imgUploadRes.file.Location;
       }
       candidate.currentJobTitle = req.body.currentJobTitle;
       candidate.location = req.body.location;
